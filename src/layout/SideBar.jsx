@@ -156,6 +156,7 @@ export default function SideBar() {
                     {page.icon}
                   </ListItemIcon>
                   <ListItemText
+                    color="primary"
                     primary={page.name}
                     sx={{ opacity: open ? 1 : 0 }}
                   />
