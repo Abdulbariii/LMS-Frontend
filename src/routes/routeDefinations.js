@@ -4,6 +4,9 @@ const routes = {
   },
   books: {
     path: "/books",
+    bookPage: {
+      path: "/books/:bookId",
+    },
   },
   rent: {
     path: "/rent",

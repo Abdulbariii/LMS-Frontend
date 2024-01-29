@@ -8,7 +8,9 @@ import { useState } from "react";
 export const loader = async ({ request }) => {
   let booksData = {};
   try {
-    booksData = await gettingBooks("http://127.0.0.1:8000/api/books/");
+    booksData = await gettingBooks(
+      "http://127.0.0.1:8000/api/books/?page_size=10000"
+    );
   } catch (err) {
     console.log(err);
   }
