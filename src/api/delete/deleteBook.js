@@ -3,7 +3,7 @@ const deleteBook = async (url) => {
     const response = await fetch(url, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNssI6IjE2OTkyMTMzNTAsImp0aSI6IjY3MTdjMzY0ZmEyNDQwNTA5MTE0NTE4MjhhOWExZDM3IiwidXNlcl9pZCI6MX0.DPn0uPC7xzgBwBgJ6o_iUIKqlgH-zISPg13BESBMb1I`,
+        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3MTQzMjkzLCJpYXQiOjE3MDY1Mzg0OTMsImp0aSI6IjJkNWZmYmU2ZDEyYzQ4OWViN2QyNDNmYmJkNmE3NjczIiwidXNlcl9pZCI6MX0._V2X9wyGbFCHBxc1aRgct384Us3HE6jjdj3QbQrFnWQ`,
         "Content-Type": "application/json",
       },
     });
