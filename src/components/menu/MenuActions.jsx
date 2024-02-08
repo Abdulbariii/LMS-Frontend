@@ -6,6 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useState } from "react";
 import DeleteModal from "../modals/DeleteModal";
+import EditModal from '../modals/UpdateModal'
 
 const options = ["View", "Edit", "Delete"];
 
@@ -14,6 +15,9 @@ const ITEM_HEIGHT = 48;
 export default function MenuActions({ data }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+
+
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -26,6 +30,8 @@ export default function MenuActions({ data }) {
     console.log(option);
     if (option === "Delete") {
       setShowDelete(true);
+    }else if (option === "Edit") {
+      setShowEdit(true);
     }
     handleClose();
   };
@@ -37,6 +43,13 @@ export default function MenuActions({ data }) {
           bookId={data.id}
           setShowDelete={setShowDelete}
           showDelete={showDelete}
+        />
+      )}
+       {showEdit&& (
+        <EditModal
+          bookId={data.id}
+          setShowEdit={setShowEdit}
+          showEdit={showEdit}
         />
       )}
 

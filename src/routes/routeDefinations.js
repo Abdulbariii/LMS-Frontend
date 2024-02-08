@@ -10,6 +10,7 @@ const routes = {
   },
   rent: {
     path: "/rent",
+   
   },
   staff: {
     path: "/staff",

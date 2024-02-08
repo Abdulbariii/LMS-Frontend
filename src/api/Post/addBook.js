@@ -1,0 +1,49 @@
+
+  const addBook = async (newBook) => {
+     // eslint-disable-next-line no-unused-vars, react-hooks/rules-of-hooks
+    try {
+      const formData = new FormData();
+
+      for (const key in newBook) {
+        if (Object.prototype.hasOwnProperty.call(newBook, key)) {
+          const apiFieldName = key === 'publicationDate' ? 'publication_date' : key;
+          formData.append(apiFieldName, (newBook )[key]);
+        }
+      }
+
+if (newBook.coverImage !== null) {
+formData.append('coverImage', newBook.coverImage);
+}
+
+console.log('FormData before sending:', formData);
+console.log(newBook)
+
+      const response = await fetch('http://127.0.0.1:8000/api/books/', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3MTQzMjkzLCJpYXQiOjE3MDY1Mzg0OTMsImp0aSI6IjJkNWZmYmU2ZDEyYzQ4OWViN2QyNDNmYmJkNmE3NjczIiwidXNlcl9pZCI6MX0._V2X9wyGbFCHBxc1aRgct384Us3HE6jjdj3QbQrFnWQ`,
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+  
+    } catch (error) {
+      // setError(error);
+      console.log(error)
+    }
+  };
+
+
+  export default addBook;
+
+
+
+
+
+
+
+
