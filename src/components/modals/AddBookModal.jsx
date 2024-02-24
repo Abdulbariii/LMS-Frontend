@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -10,14 +9,8 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import AddBook from "../../api/Post/addBook";
 
-
-
-
-
 // eslint-disable-next-line react/prop-types
-export default function AddBookModal({ showAdd, setShowAdd}) {
-    
-    
+export default function AddBookModal({ showAdd, setShowAdd }) {
   const [newBook, setNewBook] = React.useState({
     title: "",
     author: "",
@@ -34,8 +27,8 @@ export default function AddBookModal({ showAdd, setShowAdd}) {
 
   const handleAdd = async () => {
     try {
-      await AddBook(newBook,setNewBook);
-      
+      await AddBook(newBook, setNewBook);
+
       handleClose();
     } catch (error) {
       console.error("Error adding book:", error);
@@ -45,7 +38,8 @@ export default function AddBookModal({ showAdd, setShowAdd}) {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    const fieldValue = type === "checkbox" ? checked : type === "file" ? files[0] : value;
+    const fieldValue =
+      type === "checkbox" ? checked : type === "file" ? files[0] : value;
     setNewBook((prevBook) => ({
       ...prevBook,
       [name]: fieldValue,
@@ -135,13 +129,3 @@ export default function AddBookModal({ showAdd, setShowAdd}) {
     </React.Fragment>
   );
 }
-
-
-
-
-
-
-
-
-
-

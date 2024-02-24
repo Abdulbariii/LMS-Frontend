@@ -1,9 +1,0 @@
-.flex{
-  display: flex;
-  justify-content:space-between;
-  width: 85vw;
-  align-items: center;
-}
-.btnn{
-  height: 3rem !important;
-}

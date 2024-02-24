@@ -22,7 +22,10 @@ import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import GroupsIcon from "@mui/icons-material/Groups";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../components/auth/context/AuthContext";
+
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -90,9 +93,12 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
+// eslint-disable-next-line react/prop-types
 export default function SideBar() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const { isAuthenticated, toggleAuth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -117,8 +123,14 @@ export default function SideBar() {
       icon: <QuestionAnswerIcon />,
     },
   ];
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("access");
+    toggleAuth();
+    navigate("/login");
+  };
 
-  return (
+  return isAuthenticated ? (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar color={"primary"} position="fixed" open={open}>
@@ -164,6 +176,22 @@ export default function SideBar() {
               </NavLink>
             </ListItem>
           ))}
+          <ListItem>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+              }}
+            >
+              <ListItemText
+                color="primary"
+                primary="logout"
+                onClick={logout}
+                sx={{ opacity: open ? 1 : 0 }}
+              />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
@@ -171,5 +199,7 @@ export default function SideBar() {
         <IntialLayout />
       </Box>
     </Box>
+  ) : (
+    <IntialLayout />
   );
 }

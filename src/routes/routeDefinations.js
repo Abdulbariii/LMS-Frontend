@@ -1,4 +1,7 @@
 const routes = {
+  login: {
+    path: "/login",
+  },
   root: {
     path: "/",
   },
@@ -10,7 +13,6 @@ const routes = {
   },
   rent: {
     path: "/rent",
-   
   },
   staff: {
     path: "/staff",

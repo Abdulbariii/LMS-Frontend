@@ -50,23 +50,28 @@ export default function DataTable(props) {
   };
 
   return (
-    <div style={{ minHeight: 400, maxHeight: 600, width: "100%" }}>
-      <Form ref={formTable}>
-        <DataGrid
-          disableRowSelectionOnClick={true}
-          disableDensitySelector={true}
-          variant="soft"
-          rows={props.booksData}
-          columns={columns}
-          initialState={{
-            pagination: {
-              paginationModel: { page: currentPage, pageSize: pageSize },
-            },
-          }}
-          onPaginationModelChange={handlePaginationModelChange}
-          pageSizeOptions={[5, 10]}
-        />
-      </Form>
-    </div>
+    <Form ref={formTable}>
+      <DataGrid
+        sx={{
+          borderRadius: "10px",
+          maxHeight: 600,
+          minHeight: 500,
+          width: "100%",
+          backgroundColor: "#fff",
+        }}
+        disableRowSelectionOnClick={true}
+        disableDensitySelector={true}
+        variant="soft"
+        rows={props.booksData}
+        columns={columns}
+        initialState={{
+          pagination: {
+            paginationModel: { page: currentPage, pageSize: pageSize },
+          },
+        }}
+        onPaginationModelChange={handlePaginationModelChange}
+        pageSizeOptions={[5, 10]}
+      />
+    </Form>
   );
 }

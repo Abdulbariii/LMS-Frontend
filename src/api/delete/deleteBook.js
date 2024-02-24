@@ -1,9 +1,11 @@
 const deleteBook = async (url) => {
+  const accessToken = localStorage.getItem("access");
+
   try {
     const response = await fetch(url, {
       method: "DELETE",
       headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA3MTQzMjkzLCJpYXQiOjE3MDY1Mzg0OTMsImp0aSI6IjJkNWZmYmU2ZDEyYzQ4OWViN2QyNDNmYmJkNmE3NjczIiwidXNlcl9pZCI6MX0._V2X9wyGbFCHBxc1aRgct384Us3HE6jjdj3QbQrFnWQ`,
+        Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
     });

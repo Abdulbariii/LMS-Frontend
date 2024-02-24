@@ -1,46 +1,70 @@
-import { lazyPageBuilder } from "../lib/routes";
 import ErrorPage from "../pages/Error";
 import routes from "./routeDefinations";
 import Root from "../pages/Root";
-
-const lazyHomePage = lazyPageBuilder(() => import("../pages/home/_index"));
-const lazyBooksPage = lazyPageBuilder(() => import("../pages/books/_index"));
-const lazyRentPage = lazyPageBuilder(() => import("../pages/rent/_index"));
-const lazyStaffPage = lazyPageBuilder(() => import("../pages/staff/_index"));
-const lazyQuestionsPage = lazyPageBuilder(() =>
-  import("../pages/questions/_index")
-);
+import Protected from "../components/auth/Protected";
+import UnAuth from "../components/auth/UnAuth";
+import Login, { loginAction } from "../pages/login/_index";
+import Books, { booksLoader } from "../pages/books/_index";
+import Rent from "../pages/rent/_index";
+import Staff from "../pages/staff/_index";
+import Questions from "../pages/questions/_index";
+import Home from "../pages/home/_index";
 
 const routesConfig = [
   {
-    path: routes.root.path,
-    element: <Root />,
     errorElement: <ErrorPage />,
+    element: <Root />,
     children: [
       {
-        errorElement: <ErrorPage />,
-        children: [
-          {
-            index: true,
-            lazy: lazyHomePage,
-          },
-          {
-            path: routes.books.path,
-            lazy: lazyBooksPage,
-          },
-          {
-            path: routes.rent.path,
-            lazy: lazyRentPage,
-          },
-          {
-            path: routes.staff.path,
-            lazy: lazyStaffPage,
-          },
-          {
-            path: routes.questions.path,
-            lazy: lazyQuestionsPage,
-          },
-        ],
+        path: routes.root.path,
+        element: (
+          <Protected>
+            <Home />
+          </Protected>
+        ),
+      },
+      {
+        path: routes.books.path,
+        element: (
+          <Protected>
+            <Books />
+          </Protected>
+        ),
+        loader: booksLoader,
+      },
+      {
+        path: routes.rent.path,
+        element: (
+          <Protected>
+            <Rent />
+          </Protected>
+        ),
+      },
+      {
+        path: routes.questions.path,
+        element: (
+          <Protected>
+            <Questions />
+          </Protected>
+        ),
+      },
+      {
+        path: routes.staff.path,
+        element: (
+          <Protected>
+            <Staff />
+          </Protected>
+        ),
+      },
+
+      {
+        path: routes.login.path,
+        element: (
+          <UnAuth>
+            <Login />
+          </UnAuth>
+        ),
+        action: loginAction,
       },
     ],
   },
