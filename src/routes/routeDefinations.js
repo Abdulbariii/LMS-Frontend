@@ -2,6 +2,9 @@ const routes = {
   login: {
     path: "/login",
   },
+  signup: {
+    path: "/signup",
+  },
   root: {
     path: "/",
   },

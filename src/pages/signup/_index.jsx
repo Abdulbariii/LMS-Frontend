@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -13,14 +14,18 @@ import {
   useActionData,
   useNavigate,
   useNavigation,
-  Link,
 } from "react-router-dom";
 import { useEffect } from "react";
 import { AuthContext } from "../../components/auth/context/AuthContext";
 import { useContext, useState } from "react";
 import { CircularProgress } from "@mui/material";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListSubheader from "@mui/material/ListSubheader";
+import ListItemText from "@mui/material/ListItemText";
+import Collapse from "@mui/material/Collapse";
 
-export const loginAction = async ({ request }) => {
+export const signupAction = async ({ request }) => {
   if (request.method !== "POST") return {};
 
   const formData = await request.formData();
@@ -36,7 +41,7 @@ export const loginAction = async ({ request }) => {
         "Content-Type": "application/json; charset=UTF-8",
       },
       body: JSON.stringify({
-        username: formDataObject.username,
+        username: formDataObject.email,
         password: formDataObject.password,
       }),
     });
@@ -51,13 +56,12 @@ export const loginAction = async ({ request }) => {
   return response;
 };
 
-const Login = () => {
+const Signup = () => {
   const response = useActionData();
   const navigate = useNavigate();
   const { toggleAuth } = useContext(AuthContext);
   const [loginError, setLoginError] = useState();
   const navigation = useNavigation();
-  console.log(response);
 
   useEffect(() => {
     if (response?.access) {
@@ -111,7 +115,7 @@ const Login = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="p" variant="h4">
-            Login
+            Sign up
           </Typography>
           {loginError && (
             <Typography
@@ -130,10 +134,10 @@ const Login = () => {
                 margin="normal"
                 required
                 fullWidth
-                id="uername"
-                label="Username"
-                name="username"
-                autoComplete="username"
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
                 autoFocus
                 variant="standard"
                 onChange={() => {
@@ -170,20 +174,13 @@ const Login = () => {
                 {navigation.state === "submitting" ? (
                   <CircularProgress color="inherit" size={"25px"} />
                 ) : (
-                  "Sign In"
+                  "Sign up"
                 )}
               </Button>
               <Grid container>
-                <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid>
                 <Grid item>
-                  <Link to="/signup" variant="body2">
-                    <Typography color={"primary"} variant="caption">
-                      {"Don't have an account? Sign Up"}
-                    </Typography>
+                  <Link href="#" variant="body2">
+                    {"Back to login"}
                   </Link>
                 </Grid>
               </Grid>
@@ -221,10 +218,33 @@ const Login = () => {
               width: "400px",
             }}
           >
-            <Typography component="p" variant="h5">
-              UOK provide LMS for their staff in order to manage university
-              library effectivly<span>&#128218;</span>
-            </Typography>
+            <List
+              sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+              component="nav"
+              aria-labelledby="nested-list-subheader"
+              subheader={
+                <ListSubheader component="div" id="nested-list-subheader">
+                  Tips
+                </ListSubheader>
+              }
+            >
+              <ListItem>
+                <ListItemText primary="" />
+              </ListItem>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem sx={{ pl: 4 }}>
+                    <ListItemText primary="Starred" />
+                  </ListItem>
+                </List>
+              </Collapse>
+              <ListItem>
+                <ListItemText primary="Sent mail" />
+              </ListItem>
+              <ListItem>
+                <ListItemText primary="Drafts" />
+              </ListItem>
+            </List>
           </Box>
         </Box>
       </Box>
@@ -232,4 +252,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

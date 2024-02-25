@@ -9,6 +9,7 @@ import Rent from "../pages/rent/_index";
 import Staff from "../pages/staff/_index";
 import Questions from "../pages/questions/_index";
 import Home from "../pages/home/_index";
+import Signup, { signupAction } from "../pages/signup/_index";
 
 const routesConfig = [
   {
@@ -65,6 +66,15 @@ const routesConfig = [
           </UnAuth>
         ),
         action: loginAction,
+      },
+      {
+        path: routes.signup.path,
+        element: (
+          <UnAuth>
+            <Signup />
+          </UnAuth>
+        ),
+        action: signupAction,
       },
     ],
   },
