@@ -21,8 +21,8 @@ const addBook = async (newBook) => {
     const response = await fetch("http://127.0.0.1:8000/api/books/", {
       method: "POST",
       headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzA5NTA5ODQzLCJpYXQiOjE3MDg5MDUwNDMsImp0aSI6IjcyODA3ZDQzZTA3NzQxZTk5OTZiZDI0ZDExMDc3NTQ1IiwidXNlcl9pZCI6MX0.y1ihNyCYadSPyYBYUoEgcsRXKRJIy41lf_czw4XiKHc`,
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+        // "Content-Type": "application/json",
       },
       body: formData,
     });
