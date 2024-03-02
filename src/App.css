@@ -10,6 +10,7 @@ body {
   background-size: cover;
   background-position: center;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 /* codes only for pages */
 
@@ -20,4 +21,8 @@ body {
   justify-content: center;
   align-items: center;
   gap: "30px";
+}
+
+.css-1r9jet7 {
+  display: none !important;
 }

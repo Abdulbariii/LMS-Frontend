@@ -112,32 +112,38 @@ export default function SideBar() {
   };
 
   return isAuthenticated ? (
-    <Box sx={{ display: "flex" }}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+      }}
+    >
       <CssBaseline />
 
       <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          {open ? (
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === "rtl" && open ? (
-                <ChevronRightIcon />
-              ) : (
-                <ChevronLeftIcon />
-              )}
-            </IconButton>
-          ) : (
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-            >
-              <MenuIcon />
-            </IconButton>
-          )}
-        </DrawerHeader>
         <Divider />
         <List>
+          <ListItem sx={{ display: "block", ml: 1 }}>
+            {open ? (
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === "rtl" && open ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )}
+              </IconButton>
+            ) : (
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+              >
+                <MenuIcon />
+              </IconButton>
+            )}
+          </ListItem>
           {pages.map((page) => (
             <ListItem key={page.path} disablePadding sx={{ display: "block" }}>
               <NavLink to={page.path}>
