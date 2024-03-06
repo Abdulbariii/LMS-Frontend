@@ -4,9 +4,10 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteModal from "../modals/DeleteModal";
-import EditModal from '../modals/UpdateModal'
+import EditModal from "../modals/UpdateModal";
+import { useActionData } from "react-router-dom";
 
 const options = ["View", "Edit", "Delete"];
 
@@ -16,7 +17,7 @@ export default function MenuActions({ data }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
-
+  const actionResponse = useActionData();
 
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -30,11 +31,18 @@ export default function MenuActions({ data }) {
     console.log(option);
     if (option === "Delete") {
       setShowDelete(true);
-    }else if (option === "Edit") {
+    } else if (option === "Edit") {
       setShowEdit(true);
     }
     handleClose();
   };
+
+  useEffect(() => {
+    if (actionResponse) {
+      setShowEdit(false);
+      setShowDelete(false);
+    }
+  }, [actionResponse]);
 
   return (
     <div>
@@ -45,7 +53,7 @@ export default function MenuActions({ data }) {
           showDelete={showDelete}
         />
       )}
-       {showEdit&& (
+      {showEdit && (
         <EditModal
           bookId={data.id}
           setShowEdit={setShowEdit}

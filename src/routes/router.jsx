@@ -4,7 +4,7 @@ import Root from "../pages/Root";
 import Protected from "../components/auth/Protected";
 import UnAuth from "../components/auth/UnAuth";
 import Login, { loginAction } from "../pages/login/_index";
-import Books, { booksLoader } from "../pages/books/_index";
+import Books, { booksLoader, addBookAction } from "../pages/books/_index";
 import Rent from "../pages/rent/_index";
 import Staff from "../pages/staff/_index";
 import Questions from "../pages/questions/_index";
@@ -32,6 +32,7 @@ const routesConfig = [
           </Protected>
         ),
         loader: booksLoader,
+        action: addBookAction,
       },
       {
         path: routes.rent.path,

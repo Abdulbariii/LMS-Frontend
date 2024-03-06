@@ -67,8 +67,8 @@ const Login = () => {
       toggleAuth();
       navigate("/");
     }
-    if (response?.detail) {
-      setLoginError(response?.detail);
+    if (response?.error) {
+      setLoginError(response?.error);
     }
   }, [response]);
 

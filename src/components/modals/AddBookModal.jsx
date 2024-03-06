@@ -7,10 +7,18 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import AddBook from "../../api/Post/addBook";
+import {
+  Select,
+  Box,
+  MenuItem,
+  InputLabel,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
+import { useSubmit } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
-export default function AddBookModal({ showAdd, setShowAdd }) {
+export default function AddBookModal({ showAdd, setShowAdd, loading }) {
   const [newBook, setNewBook] = React.useState({
     title: "",
     author: "",
@@ -21,19 +29,33 @@ export default function AddBookModal({ showAdd, setShowAdd }) {
     category_name: null,
   });
 
+  const submit = useSubmit();
+
   const handleClose = () => {
     setShowAdd(false);
   };
 
   const handleAdd = async () => {
-    try {
-      await AddBook(newBook, setNewBook);
+    const formDataNew = new FormData();
 
-      handleClose();
-    } catch (error) {
-      console.error("Error adding book:", error);
-      // Handle error as needed
+    try {
+      for (const key in newBook) {
+        if (Object.prototype.hasOwnProperty.call(newBook, key)) {
+          const apiFieldName =
+            key === "publicationDate" ? "publication_date" : key;
+          formDataNew.append(apiFieldName, newBook[key]);
+        }
+      }
+      formDataNew.append("cover_image", newBook.cover_image);
+    } catch (err) {
+      console.log(err);
     }
+
+    submit(formDataNew, {
+      method: "POST",
+      action: ".",
+      encType: "multipart/form-data",
+    });
   };
 
   const handleChange = (e) => {
@@ -43,6 +65,26 @@ export default function AddBookModal({ showAdd, setShowAdd }) {
     setNewBook((prevBook) => ({
       ...prevBook,
       [name]: fieldValue,
+    }));
+  };
+
+  const genreOptions = [
+    { id: 1, name: "Science" },
+    { id: 2, name: "Law" },
+    { id: 3, name: "Medicine" },
+    { id: 4, name: "Mathematics" },
+    { id: 5, name: "History" },
+    { id: 6, name: "Literature" },
+    { id: 7, name: "Engineering" },
+    { id: 8, name: "Computer Science" },
+    { id: 9, name: "Psychology" },
+    { id: 10, name: "Economics" },
+  ];
+
+  const handleGenreOption = (e) => {
+    setNewBook((prevState) => ({
+      ...prevState,
+      genre: e.target.value,
     }));
   };
 
@@ -57,6 +99,7 @@ export default function AddBookModal({ showAdd, setShowAdd }) {
         <DialogTitle id="alert-dialog-title">Add Book</DialogTitle>
         <DialogContent>
           <TextField
+            sx={{ borderRadius: "8px" }}
             autoFocus
             margin="dense"
             id="title"
@@ -68,6 +111,7 @@ export default function AddBookModal({ showAdd, setShowAdd }) {
             onChange={handleChange}
           />
           <TextField
+            sx={{ borderRadius: "8px" }}
             margin="dense"
             id="author"
             label="Author"
@@ -77,17 +121,36 @@ export default function AddBookModal({ showAdd, setShowAdd }) {
             value={newBook.author}
             onChange={handleChange}
           />
+          <Box>
+            <InputLabel
+              sx={{
+                fontSize: "12px",
+                color: "000",
+              }}
+              id="demo"
+            >
+              Genre
+            </InputLabel>
+            <Select
+              variant="outlined"
+              fullWidth
+              sx={{ bgcolor: "#fff", borderRadius: "8px" }}
+              labelId="demo"
+              id="demo-simple-select-standard"
+              label="Genre"
+              size="small"
+              value={newBook.genre}
+              onChange={handleGenreOption}
+            >
+              {genreOptions.map((option) => (
+                <MenuItem key={option.id} value={option.name}>
+                  {option.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
           <TextField
-            margin="dense"
-            id="genre"
-            label="Genre"
-            type="text"
-            fullWidth
-            name="genre"
-            value={newBook.genre}
-            onChange={handleChange}
-          />
-          <TextField
+            sx={{ borderRadius: "8px" }}
             margin="dense"
             id="publication_date"
             // label="dd/mm/yy"
@@ -118,11 +181,44 @@ export default function AddBookModal({ showAdd, setShowAdd }) {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
+          <Button
+            onClick={handleClose}
+            variant="outlined"
+            sx={{
+              bgcolor: "#fff",
+              height: "35px",
+              borderRadius: "8px",
+              width: "85px",
+              mr: "5px",
+              color: "text.main",
+              ":hover": {
+                bgcolor: "#f0fff0", // theme.palette.primary.main
+              },
+            }}
+          >
+            <Typography variant="caption">Cancel</Typography>
           </Button>
-          <Button onClick={handleAdd} color="primary">
-            Add
+
+          <Button
+            onClick={handleAdd}
+            variant="outlined"
+            sx={{
+              bgcolor: "#fff",
+              height: "35px",
+              borderRadius: "8px",
+              width: "85px",
+              mr: "5px",
+              color: "text.main",
+              ":hover": {
+                bgcolor: "#f0fff0", // theme.palette.primary.main
+              },
+            }}
+          >
+            {loading === "submitting" ? (
+              <CircularProgress color="inherit" size={"25px"} />
+            ) : (
+              <Typography variant="caption"> Add </Typography>
+            )}
           </Button>
         </DialogActions>
       </Dialog>

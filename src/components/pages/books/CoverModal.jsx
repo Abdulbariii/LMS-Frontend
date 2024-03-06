@@ -7,7 +7,6 @@ import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 // eslint-disable-next-line react/prop-types
 export const CoverModal = ({ data }) => {
   const [isOpen, setIsOpen] = useState(false);
-  console.log(data?.row.title);
   const handleCoverModel = useCallback(() => {
     setIsOpen(!isOpen);
   }, [setIsOpen, isOpen]);
@@ -55,7 +54,12 @@ export const CoverModal = ({ data }) => {
 
           <Box sx={{ width: "100%", height: 450, mt: 3 }}>
             <img
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "10px",
+              }}
               src={`http://127.0.0.1:8000${data?.row.cover_image}`}
               alt="Book Cover"
             />

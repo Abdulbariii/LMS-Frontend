@@ -7,14 +7,18 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import deleteBook from "../../api/delete/deleteBook";
+import { useRevalidator } from "react-router-dom";
 
 export default function DeleteModal({ showDelete, setShowDelete, bookId }) {
+  const revalidator = useRevalidator();
   const handleClose = () => {
     setShowDelete(false);
   };
 
-  const handleDelete = () => {
-    deleteBook(`http://127.0.0.1:8000/api/books/${bookId}`);
+  const handleDelete = async () => {
+    await deleteBook(`http://127.0.0.1:8000/api/books/${bookId}`);
+    await revalidator.revalidate();
+    handleClose();
   };
 
   console.log(bookId);

@@ -1,8 +1,8 @@
 /// this is link for image  media/books/covers/Screenshot_2024-01-30_at_12.40.32AM_ywII4t2.png
 //you can render image like this <img src={`http://127.0.0.1:8000${newBook.cover_image}`} alt="Book Cover" />
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useActionData } from "react-router-dom";
 import { gettingBooks } from "../../api/endpoints/Books";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import Button from "@mui/material/Button";
 import AddBookModal from "../../components/modals/AddBookModal";
 import { Box, Typography } from "@mui/material";
@@ -25,6 +25,9 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import FindInPageRoundedIcon from "@mui/icons-material/FindInPageRounded";
 import { Stack } from "@mui/material";
 import { CoverModal } from "../../components/pages/books/CoverModal";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import addBook from "../../api/Post/addBook";
+import editBook from "../../api/edit/editBook";
 
 export const booksLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -38,7 +41,7 @@ export const booksLoader = async ({ request }) => {
     page = 1;
   }
 
-  if (typeof booking === "boolean") {
+  if (booking) {
     page = 1;
   }
 
@@ -67,12 +70,41 @@ export const booksLoader = async ({ request }) => {
   return booksData;
 };
 
+export const addBookAction = async ({ request }) => {
+  let actionResponse;
+  if (request.method === "POST") {
+    const formData = await request.formData();
+    try {
+      actionResponse = await addBook(formData);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  if (request.method === "PUT") {
+    const formData = await request.formData();
+    const formDataObject = Object.fromEntries(formData.entries());
+    const { id } = formDataObject;
+
+    console.log(formDataObject, "from page");
+    try {
+      actionResponse = await editBook(id, formData);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  return actionResponse;
+};
+
 const Books = () => {
   const booksData = useLoaderData();
   const [showAdd, setShowAdd] = useState(false);
   let [searchParams, setSearchParams] = useSearchParams();
+  const actionResponse = useActionData();
   const navigation = useNavigation();
   const revalidator = useRevalidator();
+  const [publicationDate, setPublicationDate] = useState();
+
   const currentPage = useMemo(
     () => searchParams.get("page") || 1,
     [searchParams]
@@ -88,9 +120,7 @@ const Books = () => {
     searchParams.get("genre") || ""
   );
 
-  const [publicationDate, setPublicationDate] = useState();
-
-  console.log(booksData);
+  console.log("im action", actionResponse);
 
   const columns = [
     { field: "title", headerName: "Title", width: 250 },
@@ -123,7 +153,9 @@ const Books = () => {
       field: "actions",
       headerName: "Actions",
       width: 100,
-      renderCell: (params) => <MenuActions data={params} />,
+      renderCell: (params) => (
+        <MenuActions loading={navigation.state} data={params} />
+      ),
     },
   ];
 
@@ -163,6 +195,14 @@ const Books = () => {
     { id: 9, name: "Psychology" },
     { id: 10, name: "Economics" },
   ];
+
+  useEffect(() => {
+    if (actionResponse) {
+      setShowAdd(false);
+      handleClearFilter();
+      // show the toast
+    }
+  }, [actionResponse]);
 
   const handlePaginationModelChange = useCallback(
     (data) => {
@@ -260,8 +300,6 @@ const Books = () => {
     );
   }
 
-  console.log(booksData?.results.length);
-
   return (
     <Box sx={{ width: "100%" }}>
       <Box
@@ -270,18 +308,31 @@ const Books = () => {
           justifyContent: "space-between",
           mb: "40px",
           alignItems: "center",
+          width: "95%",
         }}
       >
         <h1>This is Books page</h1>
 
-        <Button
-          sx={{ width: 150, height: 50, color: "#000", bgcolor: "#fff" }}
-          variant="contained"
-          onClick={() => setShowAdd(!showAdd)}
-        >
-          {" "}
-          Add Book
-        </Button>
+        <Box>
+          <Button
+            onClick={() => setShowAdd(true)}
+            variant="outlined"
+            sx={{
+              bgcolor: "#fff",
+              height: "65px",
+              borderRadius: "8px",
+              width: "125px",
+              mr: "5px",
+              color: "text.main",
+              ":hover": {
+                bgcolor: "#f0fff0", // theme.palette.primary.main
+              },
+            }}
+          >
+            <AddRoundedIcon fontSize="medium" />
+            <Typography variant="caption">Add book</Typography>
+          </Button>
+        </Box>
       </Box>
       <Box
         sx={{
@@ -576,7 +627,13 @@ const Books = () => {
           onPaginationModelChange={handlePaginationModelChange}
         />
       )}
-      {showAdd && <AddBookModal setShowAdd={setShowAdd} showAdd={showAdd} />}
+      {showAdd && (
+        <AddBookModal
+          loading={navigation.state}
+          setShowAdd={setShowAdd}
+          showAdd={showAdd}
+        />
+      )}
     </Box>
   );
 };
