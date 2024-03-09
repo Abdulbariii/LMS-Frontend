@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import { Modal, Typography, Box, IconButton } from "@mui/material";
-import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import { useCallback, useState } from "react";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 
@@ -73,7 +72,18 @@ export const CoverModal = ({ data }) => {
         id="long-button"
         aria-haspopup="true"
       >
-        <VisibilityRoundedIcon />
+        <Box sx={{ width: 70, height: 30, mb: 5, mt: 5 }}>
+          <img
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              borderRadius: "3px",
+            }}
+            src={`http://127.0.0.1:8000${data?.row.cover_image}`}
+            alt="Book Cover"
+          />
+        </Box>
       </IconButton>
     </div>
   );

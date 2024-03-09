@@ -64,10 +64,9 @@ const Signup = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (response?.access) {
+    if (response?.access && response?.id) {
       localStorage.setItem("token", response?.refresh);
       localStorage.setItem("access", response?.access);
-
       toggleAuth();
       navigate("/");
     }
