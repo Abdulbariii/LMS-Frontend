@@ -21,8 +21,6 @@ export default function DeleteModal({ showDelete, setShowDelete, bookId }) {
     handleClose();
   };
 
-  console.log(bookId);
-
   return (
     <React.Fragment>
       <Dialog

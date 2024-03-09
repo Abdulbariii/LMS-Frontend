@@ -57,12 +57,13 @@ const Login = () => {
   const { toggleAuth } = useContext(AuthContext);
   const [loginError, setLoginError] = useState();
   const navigation = useNavigation();
-  console.log(response);
 
   useEffect(() => {
     if (response?.access) {
       localStorage.setItem("token", response?.refresh);
       localStorage.setItem("access", response?.access);
+      localStorage.setItem("userId", response?.id);
+      localStorage.setItem("username", response?.username);
 
       toggleAuth();
       navigate("/");

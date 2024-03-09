@@ -1,18 +1,4 @@
 const CsrfToken = () => {
-  const testCsrf = async () => {
-    await fetch("http://127.0.0.1:8000/api-auth/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json; charset=UTF-8",
-      },
-      body: JSON.stringify({
-        username: "aa",
-        password: "aa",
-      }),
-    });
-  };
-
-  testCsrf();
   function getCookie(name) {
     let cookieValue = null;
 
@@ -33,7 +19,6 @@ const CsrfToken = () => {
   }
 
   getCookie("csrftoken");
-  console.log(document.cookie, "Hehhh");
   return <input type="hidden" name="csrfmiddlewaretoken" />;
 };
 export default CsrfToken;

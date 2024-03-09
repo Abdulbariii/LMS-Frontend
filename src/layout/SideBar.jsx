@@ -107,6 +107,9 @@ export default function SideBar() {
   const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("access");
+    localStorage.removeItem("username");
+    localStorage.removeItem("userId");
+
     toggleAuth();
     navigate("/login");
   };

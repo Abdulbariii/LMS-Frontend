@@ -2,11 +2,12 @@
 //you can render image like this <img src={`http://127.0.0.1:8000${newBook.cover_image}`} alt="Book Cover" />
 import { useLoaderData, useActionData } from "react-router-dom";
 import { gettingBooks } from "../../api/endpoints/Books";
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import Button from "@mui/material/Button";
 import AddBookModal from "../../components/modals/AddBookModal";
-import { Box, Typography } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { Box, Typography, Alert } from "@mui/material";
+import { DataGrid, gridClasses } from "@mui/x-data-grid";
+import { alpha, styled } from "@mui/material/styles";
 import {
   useSearchParams,
   useNavigation,
@@ -28,6 +29,7 @@ import { CoverModal } from "../../components/pages/books/CoverModal";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import addBook from "../../api/Post/addBook";
 import editBook from "../../api/edit/editBook";
+import Slide from "@mui/material/Slide";
 
 export const booksLoader = async ({ request }) => {
   const url = new URL(request.url);
@@ -37,6 +39,9 @@ export const booksLoader = async ({ request }) => {
   const booking = url.searchParams.get("booking");
   const genre = url.searchParams.get("genre");
   const date = url.searchParams.get("date");
+  const userIdAddedBy = url.searchParams.get("added_by");
+  const userIdUpdatedBy = url.searchParams.get("updated_by");
+
   if (searchValue && searchBy) {
     page = 1;
   }
@@ -61,7 +66,9 @@ export const booksLoader = async ({ request }) => {
         searchBy ? searchBy : "?"
       }=${searchValue ? searchValue : ""}&is_booked=${booking}&genre=${
         genre ? genre : ""
-      }&publication_date=${date ? date : ""}`
+      }&publication_date=${date ? date : ""}&added_by=${
+        userIdAddedBy ? userIdAddedBy : ""
+      }&updated_by=${userIdUpdatedBy ? userIdUpdatedBy : ""}`
     );
   } catch (err) {
     console.log(err);
@@ -74,6 +81,9 @@ export const addBookAction = async ({ request }) => {
   let actionResponse;
   if (request.method === "POST") {
     const formData = await request.formData();
+    const formDataObject = Object.fromEntries(formData.entries());
+    console.log(formDataObject, "post");
+
     try {
       actionResponse = await addBook(formData);
     } catch (err) {
@@ -85,8 +95,8 @@ export const addBookAction = async ({ request }) => {
     const formData = await request.formData();
     const formDataObject = Object.fromEntries(formData.entries());
     const { id } = formDataObject;
+    console.log(formDataObject, "put");
 
-    console.log(formDataObject, "from page");
     try {
       actionResponse = await editBook(id, formData);
     } catch (err) {
@@ -96,6 +106,41 @@ export const addBookAction = async ({ request }) => {
   return actionResponse;
 };
 
+const ODD_OPACITY = 0.2;
+
+const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
+  [`& .${gridClasses.row}.even`]: {
+    backgroundColor: theme.palette.grey[200],
+    "&:hover, &.Mui-hovered": {
+      backgroundColor: alpha(theme.palette.primary.main, ODD_OPACITY),
+      "@media (hover: none)": {
+        backgroundColor: "transparent",
+      },
+    },
+    "&.Mui-selected": {
+      backgroundColor: alpha(
+        theme.palette.primary.main,
+        ODD_OPACITY + theme.palette.action.selectedOpacity
+      ),
+      "&:hover, &.Mui-hovered": {
+        backgroundColor: alpha(
+          theme.palette.primary.main,
+          ODD_OPACITY +
+            theme.palette.action.selectedOpacity +
+            theme.palette.action.hoverOpacity
+        ),
+        // Reset on touch devices, it doesn't add specificity
+        "@media (hover: none)": {
+          backgroundColor: alpha(
+            theme.palette.primary.main,
+            ODD_OPACITY + theme.palette.action.selectedOpacity
+          ),
+        },
+      },
+    },
+  },
+}));
+
 const Books = () => {
   const booksData = useLoaderData();
   const [showAdd, setShowAdd] = useState(false);
@@ -104,7 +149,8 @@ const Books = () => {
   const navigation = useNavigation();
   const revalidator = useRevalidator();
   const [publicationDate, setPublicationDate] = useState();
-
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const alertSuccessContainer = useRef();
   const currentPage = useMemo(
     () => searchParams.get("page") || 1,
     [searchParams]
@@ -120,39 +166,62 @@ const Books = () => {
     searchParams.get("genre") || ""
   );
 
-  console.log("im action", actionResponse);
-
   const columns = [
-    { field: "title", headerName: "Title", width: 250 },
-    { field: "publication_date", headerName: "Publish date", width: 250 },
-    {
-      field: "is_booked",
-      headerName: "Available",
-      width: 200,
-      valueGetter: (params) => (params.row.is_booked ? "Booked" : "Not booked"),
-    },
-    {
-      field: "genre",
-      headerName: "Genre",
-      sortable: false,
-      width: 200,
-    },
+    { field: "book_code", headerName: "Book code", width: 130 },
+    { field: "title", headerName: "Title", width: 170 },
     {
       field: "author",
       headerName: "Author",
-      sortable: false,
-      width: 200,
+      width: 120,
     },
+    { field: "page_number", headerName: "Page number", width: 110 },
+
+    {
+      field: "publisher",
+      headerName: "Publisher",
+      width: 170,
+    },
+
+    {
+      field: "published_place",
+      headerName: "Published place",
+      width: 150,
+    },
+    { field: "publication_date", headerName: "Publish date", width: 120 },
+    {
+      field: "genre",
+      headerName: "Genre",
+      width: 150,
+    },
+    {
+      field: "dewey_decimal_number",
+      headerName: "Dewey decimal",
+      width: 130,
+    },
+    {
+      field: "dewey_decimal_category_range",
+      headerName: "Range (DC)",
+      width: 150,
+    },
+
+    {
+      field: "is_booked",
+      headerName: "Available",
+      minWidth: 100,
+      valueGetter: (params) => (params.row.is_booked ? "Booked" : "Not booked"),
+    },
+
     {
       field: "Covers",
       headerName: "Covers",
-      width: 200,
+      width: 120,
       renderCell: (params) => <CoverModal data={params} />,
     },
     {
       field: "actions",
-      headerName: "Actions",
-      width: 100,
+      headerName: "",
+      sortable: false,
+      width: 30,
       renderCell: (params) => (
         <MenuActions loading={navigation.state} data={params} />
       ),
@@ -162,11 +231,43 @@ const Books = () => {
   const searchOptions = [
     {
       id: 1,
-      name: "title",
+      name: "Title",
+      value: "title",
     },
     {
       id: 2,
-      name: "author",
+      name: "Author",
+      value: "author",
+    },
+    {
+      id: 3,
+      name: "Dewey decimal",
+      value: "dewey_decimal_number",
+    },
+    {
+      id: 4,
+      name: "Dewey decimal range",
+      value: "dewey_decimal_category_range",
+    },
+    {
+      id: 5,
+      name: "Book code",
+      value: "book_code",
+    },
+    {
+      id: 6,
+      name: "Number of page",
+      value: "page_number",
+    },
+    {
+      id: 7,
+      name: "Publisher",
+      value: "publisher",
+    },
+    {
+      id: 7,
+      name: "Published place",
+      value: "published_place",
     },
   ];
 
@@ -200,7 +301,10 @@ const Books = () => {
     if (actionResponse) {
       setShowAdd(false);
       handleClearFilter();
-      // show the toast
+      setShowSuccessAlert(true);
+      setTimeout(() => {
+        setShowSuccessAlert(false);
+      }, 2000);
     }
   }, [actionResponse]);
 
@@ -227,7 +331,7 @@ const Books = () => {
       if (!e.target.value) {
         const updatedSearchParams = new URLSearchParams(searchParams);
         updatedSearchParams.delete("searchBy");
-        updatedSearchParams.delete("searchvalue");
+        updatedSearchParams.delete("searchValue");
         setSearchParams(updatedSearchParams);
       }
     },
@@ -301,7 +405,7 @@ const Books = () => {
   }
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ maxWidth: "95vw" }}>
       <Box
         sx={{
           display: "flex",
@@ -311,7 +415,22 @@ const Books = () => {
           width: "95%",
         }}
       >
-        <h1>This is Books page</h1>
+        {searchParams.get("username") ? (
+          <Box
+            sx={{
+              p: 3,
+              borderRadius: "14px",
+              bgcolor: "#fff",
+              textAlign: "center",
+            }}
+          >
+            <Typography variant="h4">{`${booksData.count} books ${
+              searchParams.get("added_by") ? "added" : "updated"
+            } by ${searchParams.get("username")}`}</Typography>
+          </Box>
+        ) : (
+          <Typography variant="h2">Books</Typography>
+        )}
 
         <Box>
           <Button
@@ -330,7 +449,7 @@ const Books = () => {
             }}
           >
             <AddRoundedIcon fontSize="medium" />
-            <Typography variant="caption">Add book</Typography>
+            <Typography variant="caption">Add</Typography>
           </Button>
         </Box>
       </Box>
@@ -371,7 +490,7 @@ const Books = () => {
             size="small"
           >
             {searchOptions.map((option) => (
-              <MenuItem key={option.id} value={option.name}>
+              <MenuItem key={option.id} value={option.value}>
                 {option.name}
               </MenuItem>
             ))}
@@ -592,7 +711,11 @@ const Books = () => {
       </Box>
 
       {booksData.results && (
-        <DataGrid
+        <StripedDataGrid
+          getRowClassName={(params) =>
+            params.indexRelativeToCurrentPage % 2 === 0 ? "even" : "odd"
+          }
+          rowHeight={40}
           autoHeight={!booksData.results.length}
           rowCount={booksData.count}
           slots={{ noRowsOverlay: NoResultsOverlay }}
@@ -602,7 +725,7 @@ const Books = () => {
             minHeight: 500,
             maxWidth: "95%",
             backgroundColor: "#fff",
-            fontSize: "18px",
+            fontSize: "15px",
             pl: "20px",
             pt: "20px",
             "--DataGrid-overlayHeight": "300px",
@@ -634,6 +757,28 @@ const Books = () => {
           showAdd={showAdd}
         />
       )}
+
+      <Box
+        ref={alertSuccessContainer}
+        sx={{
+          position: "fixed",
+          top: 40,
+        }}
+      >
+        <Slide in={showSuccessAlert} container={alertSuccessContainer.current}>
+          <Alert
+            sx={{
+              width: 500,
+              fontSize: 20,
+              display: "flex",
+              alignItems: "center",
+            }}
+            severity="success"
+          >
+            The action successfully completed
+          </Alert>
+        </Slide>
+      </Box>
     </Box>
   );
 };

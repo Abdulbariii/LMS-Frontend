@@ -73,6 +73,7 @@ const Signup = () => {
     
     if(response?.id){
       navigate("/login");
+
     }
   }, [response]);
 

@@ -25,7 +25,6 @@ const editBook = async (bookId, updatedBookData) => {
     // Handle error as needed, e.g., display an error message to the user
   }
 
-  console.log(response);
   return response;
 };
 export default editBook;

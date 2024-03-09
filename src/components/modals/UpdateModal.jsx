@@ -28,7 +28,16 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     publication_date: "",
     is_booked: false,
     cover_image: null,
-    category_name: null,
+    category_name: "",
+    category: "",
+    book_code: "",
+    publisher: "",
+    published_place: "",
+    page_number: "",
+    dewey_decimal_number: "",
+    dewey_decimal_category_range: "",
+    updated_by: "",
+    added_by: "",
   });
 
   function extractPathFromURL(url) {
@@ -54,6 +63,10 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
           if (response.ok) {
             const data = await response.json();
             // Update the state with the fetched data
+            data.category_name = "";
+            data.category = "";
+            data.added_by = data.added_by ? data.added_by.toString() : "";
+            data.updated_by = localStorage.getItem("userId");
             setUpdatedBook(data);
           } else {
             console.error("Failed to fetch book data");
@@ -67,6 +80,8 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     fetchData();
   }, [showEdit, bookId]);
 
+  console.log(updatedBook);
+
   const submit = useSubmit();
   const navigation = useNavigation();
 
@@ -76,6 +91,8 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
 
   const handleUpdate = async () => {
     const formDataNew = new FormData();
+
+    console.log(updatedBook, "before send");
 
     try {
       for (const key in updatedBook) {
@@ -148,19 +165,39 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     }));
   };
 
-  console.log(updatedBook);
-
   return (
     <React.Fragment>
       <Dialog
+        maxWidth="lg"
         open={showEdit}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">Edit Book</DialogTitle>
-        <DialogContent>
+        <DialogTitle id="alert-dialog-title">Editing</DialogTitle>
+        <DialogContent
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "flex-start",
+            gap: 3,
+            alignItems: "flex-start",
+          }}
+        >
           <TextField
+            sx={{ borderRadius: "8px", width: "45%" }}
+            autoFocus
+            margin="dense"
+            id="book_code"
+            label="Book code"
+            type="number"
+            fullWidth
+            name="book_code"
+            value={updatedBook.book_code}
+            onChange={handleChange}
+          />
+          <TextField
+            sx={{ borderRadius: "8px", width: "45%" }}
             autoFocus
             margin="dense"
             id="title"
@@ -172,6 +209,7 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
             onChange={handleChange}
           />
           <TextField
+            sx={{ borderRadius: "8px", width: "45%" }}
             margin="dense"
             id="author"
             label="Author"
@@ -179,6 +217,53 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
             fullWidth
             name="author"
             value={updatedBook.author}
+            onChange={handleChange}
+          />
+          <TextField
+            sx={{ borderRadius: "8px", width: "45%" }}
+            autoFocus
+            margin="dense"
+            id="page_number"
+            label="Page number"
+            type="number"
+            fullWidth
+            name="page_number"
+            value={updatedBook.page_number}
+            onChange={handleChange}
+          />
+          <TextField
+            sx={{ borderRadius: "8px", width: "45%" }}
+            autoFocus
+            margin="dense"
+            id="publisher"
+            label="Publisher"
+            type="text"
+            fullWidth
+            name="publisher"
+            value={updatedBook.publisher}
+            onChange={handleChange}
+          />
+          <TextField
+            sx={{ borderRadius: "8px", width: "45%" }}
+            autoFocus
+            margin="dense"
+            id="published_place"
+            label="Published place"
+            type="text"
+            fullWidth
+            name="published_place"
+            value={updatedBook.published_place}
+            onChange={handleChange}
+          />
+          <TextField
+            sx={{ borderRadius: "8px", width: "45%" }}
+            margin="dense"
+            id="publication_date"
+            // label="Publication Date"
+            type="date"
+            fullWidth
+            name="publication_date"
+            value={updatedBook.publication_date}
             onChange={handleChange}
           />
           <Box>
@@ -194,11 +279,10 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
             <Select
               variant="outlined"
               fullWidth
-              sx={{ bgcolor: "#fff", borderRadius: "8px" }}
+              sx={{ bgcolor: "#fff", borderRadius: "4px", width: "520px" }}
               labelId="demo"
               id="demo-simple-select-standard"
               label="Genre"
-              size="small"
               value={updatedBook.genre}
               onChange={handleGenreOption}
             >
@@ -210,13 +294,25 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
             </Select>
           </Box>
           <TextField
+            sx={{ borderRadius: "8px", width: "45%" }}
             margin="dense"
-            id="publication_date"
-            // label="Publication Date"
-            type="date"
+            id="dewey_decimal_number"
+            label="Dewey decimal number"
+            type="text"
             fullWidth
-            name="publication_date"
-            value={updatedBook.publication_date}
+            name="dewey_decimal_number"
+            value={updatedBook.dewey_decimal_number}
+            onChange={handleChange}
+          />
+          <TextField
+            sx={{ borderRadius: "8px", width: "45%" }}
+            margin="dense"
+            id="dewey_decimal_category_range"
+            label="Dewey decimal category range"
+            type="text"
+            fullWidth
+            name="dewey_decimal_category_range"
+            value={updatedBook.dewey_decimal_category_range}
             onChange={handleChange}
           />
           <TextField
@@ -226,6 +322,7 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
             type="file"
             fullWidth
             name="cover_image"
+            sx={{ borderRadius: "8px", width: "45%" }}
             onChange={handleChange}
           />
           <FormControlLabel

@@ -28,7 +28,6 @@ export default function MenuActions({ data }) {
   };
 
   const handleAction = (option) => {
-    console.log(option);
     if (option === "Delete") {
       setShowDelete(true);
     } else if (option === "Edit") {
