@@ -8,7 +8,6 @@ import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-// import uniLogo from "../../assets/uni-logo.png";
 import {
   Form,
   useActionData,
@@ -31,18 +30,25 @@ export const signupAction = async ({ request }) => {
   const formData = await request.formData();
 
   const formDataObject = Object.fromEntries(formData.entries());
-
   let response;
+ if (formDataObject.confirmPassword !== formDataObject.password) {
+  return { error: "Passwords do not match" };
+}
 
   try {
-    response = await fetch("http://127.0.0.1:8000/api/token/", {
+    response = await fetch("http://127.0.0.1:8000/api/signup/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=UTF-8",
       },
       body: JSON.stringify({
-        username: formDataObject.email,
+        first_name: formDataObject.first_name,
+        last_name: formDataObject.lastName,
+        username: formDataObject.username,
+        email: formDataObject.email,
         password: formDataObject.password,
+
+       
       }),
     });
 
@@ -59,37 +65,20 @@ export const signupAction = async ({ request }) => {
 const Signup = () => {
   const response = useActionData();
   const navigate = useNavigate();
-  const { toggleAuth } = useContext(AuthContext);
   const [loginError, setLoginError] = useState();
+  console.log(loginError);
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (response?.access) {
-      localStorage.setItem("token", response?.refresh);
-      localStorage.setItem("access", response?.access);
-
-      toggleAuth();
-      navigate("/");
-    }
-    if (response?.detail) {
-      setLoginError(response?.detail);
+    
+    if(response?.id){
+      navigate("/login");
     }
   }, [response]);
 
   return (
     <div className="login">
-      {/*  <div
-        style={{
-          position: "absolute",
-          left: "0",
-          top: "0",
-          backgroundColor: "#fff",
-          padding: "10px",
-          borderBottomRightRadius: "20px",
-        }}
-      >
-        <img style={{ width: "63px", height: "23px" }} src={uniLogo} />
-      </div>*/}
+    
       <Box
         sx={{
           display: "flex",
@@ -130,7 +119,50 @@ const Signup = () => {
           <Form method="post" action=".">
             <Box noValidate sx={{ mt: 1 }}>
               <TextField
-                error={loginError ? true : false}
+                margin="normal"
+                required
+                fullWidth
+                name="first_name"
+                label="First Name"
+                id="first_name"
+                autoComplete="given-name"
+                variant="standard"
+                onChange={() => {
+                  setLoginError(undefined);
+                }}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="lastName"
+                label="Last Name"
+                id="lastName"
+                autoComplete="family-name"
+                variant="standard"
+                onChange={() => {
+                  setLoginError(undefined);
+                }}
+              />
+
+              <TextField
+              error={response?.username?true:false}
+                margin="normal"
+                required
+                fullWidth
+                name="username"
+                label="Username"
+                id="username"
+                autoComplete="username"
+                variant="standard"
+                onChange={() => {
+                  setLoginError(undefined);
+                }}
+                helperText={response?.username&&"A user with that username already exists"}
+              />
+
+              <TextField
+                error={response?.email==='Enter a valid email address.'? true : false}
                 margin="normal"
                 required
                 fullWidth
@@ -143,6 +175,9 @@ const Signup = () => {
                 onChange={() => {
                   setLoginError(undefined);
                 }}
+                helperText={response?.email==='Enter a valid email address.'&& "Enter a valid email address"}
+
+                
               />
               <TextField
                 error={loginError ? true : false}
@@ -159,6 +194,22 @@ const Signup = () => {
                   setLoginError(undefined);
                 }}
               />
+                <TextField
+                error={response?.error==='Passwords do not match'?true:false}
+                margin="normal"
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                id="confirmPassword"
+                autoComplete="new-password"
+                variant="standard"
+                onChange={() => {
+                  setLoginError(undefined);
+                }}              
+                helperText={response?.error==='Passwords do not match'&& "Passwords do not match"}
+              />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
@@ -169,6 +220,7 @@ const Signup = () => {
                 fullWidth
                 variant="contained"
                 color="primary"
+
                 sx={{ mt: 3, mb: 2, borderRadius: "20px", p: "10px" }}
               >
                 {navigation.state === "submitting" ? (
