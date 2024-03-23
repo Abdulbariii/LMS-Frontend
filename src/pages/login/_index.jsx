@@ -59,7 +59,7 @@ const Login = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (response?.access) {
+    if (response?.is_staff) {
       localStorage.setItem("token", response?.refresh);
       localStorage.setItem("access", response?.access);
       localStorage.setItem("userId", response?.id);
@@ -67,11 +67,17 @@ const Login = () => {
 
       toggleAuth();
       navigate("/");
+    } else {
+      if (response?.is_staff == false) {
+        setLoginError("This user is not admin");
+      }
     }
     if (response?.error) {
       setLoginError(response?.error);
     }
   }, [response]);
+
+  console.log(response);
 
   return (
     <div className="login">
@@ -178,13 +184,6 @@ const Login = () => {
                 <Grid item xs>
                   <Link href="#" variant="body2">
                     Forgot password?
-                  </Link>
-                </Grid>
-                <Grid item>
-                  <Link to="/signup" variant="body2">
-                    <Typography color={"primary"} variant="caption">
-                      {"Don't have an account? Sign Up"}
-                    </Typography>
                   </Link>
                 </Grid>
               </Grid>

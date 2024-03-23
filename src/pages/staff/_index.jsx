@@ -1,10 +1,10 @@
 import { fetchData } from "../../api/general";
 import { useLoaderData } from "react-router-dom";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
-import { Card, Box, Button, Chip } from "@mui/material";
+import { Card, Box, Button, Chip, Typography } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import EmailRoundedIcon from "@mui/icons-material/EmailRounded";
-import { useNavigate, createSearchParams } from "react-router-dom";
+import { useNavigate, createSearchParams, Link } from "react-router-dom";
 
 export const staffLoader = async () => {
   let users = {};
@@ -37,11 +37,111 @@ const Staff = () => {
     <Box sx={{ p: 10 }}>
       <Box
         sx={{
+          p: 3,
+          borderRadius: "14px",
+          bgcolor: "#fff",
+          textAlign: "center",
+          width: "fit-content",
+          zIndex: "10",
+          mb: 5,
+        }}
+      >
+        <Typography variant="h3">LMS staff</Typography>
+      </Box>
+
+      {users.map(
+        (user) =>
+          user.id == currentUserId && (
+            <Box sx={{ position: "fixed", right: 45 }} key={user.id}>
+              <Card
+                sx={{
+                  bgcolor: `#fff`,
+                  width: "fit-content",
+                  borderRadius: "37px",
+                  height: "fit-content",
+                  p: 5,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  gap: 4,
+                  position: "relative",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: 2,
+                  }}
+                >
+                  <PersonRoundedIcon
+                    color={`${
+                      user.id == currentUserId ? "primary" : "#252525"
+                    }`}
+                    sx={{ fontSize: "80px" }}
+                  />
+
+                  <Chip
+                    sx={{ fontSize: "25px" }}
+                    label={`${user.first_name} ${user.last_name}`}
+                  />
+                  <Chip label={`${user.email}`} icon={<EmailRoundedIcon />} />
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    justifyContent: "flex-start",
+                    gap: 2,
+                  }}
+                >
+                  <Chip
+                    label={`Activities by ${
+                      user.id == currentUserId ? "you" : user.username
+                    }`}
+                    icon={<DoneIcon />}
+                  />
+                  <Button
+                    onClick={() =>
+                      handleTrack(user.id, "added_by", user.username)
+                    }
+                    sx={{ minWidth: "160px" }}
+                    variant="outlined"
+                  >
+                    Books added
+                  </Button>
+                  <Button
+                    onClick={() =>
+                      handleTrack(user.id, "updated_by", user.username)
+                    }
+                    sx={{ minWidth: "160px" }}
+                    variant="outlined"
+                  >
+                    Books Updated
+                  </Button>
+                  <Button sx={{ minWidth: "160px" }} variant="outlined">
+                    Books booked
+                  </Button>
+                  <Button sx={{ minWidth: "160px" }} variant="outlined">
+                    <Link to="/signup">Add new admins</Link>
+                  </Button>
+                </Box>
+              </Card>
+            </Box>
+          )
+      )}
+      <Box
+        sx={{
           display: "flex",
-          width: "95%",
+          width: "80%",
           alignItems: "center",
           justifyContent: "flex-start",
-          gap: 20,
+          gap: 5,
+          mt: 10,
           flexWrap: "wrap",
         }}
       >
@@ -49,13 +149,12 @@ const Staff = () => {
           <Card
             sx={{
               bgcolor: `#fff`,
-              minWidth: "450px",
+              minWidth: "400px",
+              maxWidth: "400px",
               borderRadius: "37px",
               height: "200px",
-              borderStyle: `${user.id == currentUserId ? "dashed" : ""}`,
-              borderColor: `${user.id == currentUserId ? "#558B2F" : ""}`,
               p: 7,
-              display: "flex",
+              display: `${user.id == currentUserId ? "none" : "flex"}`,
               alignItems: "center",
               justifyContent: "space-between",
               gap: 4,

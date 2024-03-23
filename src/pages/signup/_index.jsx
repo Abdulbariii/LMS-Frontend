@@ -3,8 +3,6 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
@@ -15,14 +13,8 @@ import {
   useNavigation,
 } from "react-router-dom";
 import { useEffect } from "react";
-import { AuthContext } from "../../components/auth/context/AuthContext";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { CircularProgress } from "@mui/material";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListSubheader from "@mui/material/ListSubheader";
-import ListItemText from "@mui/material/ListItemText";
-import Collapse from "@mui/material/Collapse";
 
 export const signupAction = async ({ request }) => {
   if (request.method !== "POST") return {};
@@ -31,9 +23,9 @@ export const signupAction = async ({ request }) => {
 
   const formDataObject = Object.fromEntries(formData.entries());
   let response;
- if (formDataObject.confirmPassword !== formDataObject.password) {
-  return { error: "Passwords do not match" };
-}
+  if (formDataObject.confirmPassword !== formDataObject.password) {
+    return { error: "Passwords do not match" };
+  }
 
   try {
     response = await fetch("http://127.0.0.1:8000/api/signup/", {
@@ -47,8 +39,7 @@ export const signupAction = async ({ request }) => {
         username: formDataObject.username,
         email: formDataObject.email,
         password: formDataObject.password,
-
-       
+        is_staff: true,
       }),
     });
 
@@ -70,16 +61,13 @@ const Signup = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    
-    if(response?.id){
-      navigate("/login");
-
+    if (response?.id) {
+      navigate("/staff");
     }
   }, [response]);
 
   return (
     <div className="login">
-    
       <Box
         sx={{
           display: "flex",
@@ -147,7 +135,7 @@ const Signup = () => {
               />
 
               <TextField
-              error={response?.username?true:false}
+                error={response?.username ? true : false}
                 margin="normal"
                 required
                 fullWidth
@@ -159,11 +147,18 @@ const Signup = () => {
                 onChange={() => {
                   setLoginError(undefined);
                 }}
-                helperText={response?.username&&"A user with that username already exists"}
+                helperText={
+                  response?.username &&
+                  "A user with that username already exists"
+                }
               />
 
               <TextField
-                error={response?.email==='Enter a valid email address.'? true : false}
+                error={
+                  response?.email === "Enter a valid email address."
+                    ? true
+                    : false
+                }
                 margin="normal"
                 required
                 fullWidth
@@ -176,9 +171,10 @@ const Signup = () => {
                 onChange={() => {
                   setLoginError(undefined);
                 }}
-                helperText={response?.email==='Enter a valid email address.'&& "Enter a valid email address"}
-
-                
+                helperText={
+                  response?.email === "Enter a valid email address." &&
+                  "Enter a valid email address"
+                }
               />
               <TextField
                 error={loginError ? true : false}
@@ -195,8 +191,10 @@ const Signup = () => {
                   setLoginError(undefined);
                 }}
               />
-                <TextField
-                error={response?.error==='Passwords do not match'?true:false}
+              <TextField
+                error={
+                  response?.error === "Passwords do not match" ? true : false
+                }
                 margin="normal"
                 required
                 fullWidth
@@ -208,12 +206,15 @@ const Signup = () => {
                 variant="standard"
                 onChange={() => {
                   setLoginError(undefined);
-                }}              
-                helperText={response?.error==='Passwords do not match'&& "Passwords do not match"}
+                }}
+                helperText={
+                  response?.error === "Passwords do not match" &&
+                  "Passwords do not match"
+                }
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
+                label="Is admin"
               />
               <Button
                 disabled={loginError ? true : false}
@@ -221,7 +222,6 @@ const Signup = () => {
                 fullWidth
                 variant="contained"
                 color="primary"
-
                 sx={{ mt: 3, mb: 2, borderRadius: "20px", p: "10px" }}
               >
                 {navigation.state === "submitting" ? (
@@ -230,13 +230,6 @@ const Signup = () => {
                   "Sign up"
                 )}
               </Button>
-              <Grid container>
-                <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Back to login"}
-                  </Link>
-                </Grid>
-              </Grid>
             </Box>
           </Form>
         </Box>
@@ -263,41 +256,17 @@ const Signup = () => {
           </Box>
           <Box
             sx={{
-              marginTop: 4,
+              marginTop: 8,
               ml: "20px",
               bgcolor: "#fff",
               padding: "20px",
-              borderRadius: "30px",
+              borderRadius: "40px",
               width: "400px",
             }}
           >
-            <List
-              sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-              component="nav"
-              aria-labelledby="nested-list-subheader"
-              subheader={
-                <ListSubheader component="div" id="nested-list-subheader">
-                  Tips
-                </ListSubheader>
-              }
-            >
-              <ListItem>
-                <ListItemText primary="" />
-              </ListItem>
-              <Collapse in={open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItem sx={{ pl: 4 }}>
-                    <ListItemText primary="Starred" />
-                  </ListItem>
-                </List>
-              </Collapse>
-              <ListItem>
-                <ListItemText primary="Sent mail" />
-              </ListItem>
-              <ListItem>
-                <ListItemText primary="Drafts" />
-              </ListItem>
-            </List>
+            <Typography variant="h4">
+              Only admins can create accounts
+            </Typography>
           </Box>
         </Box>
       </Box>

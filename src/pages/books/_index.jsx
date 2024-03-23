@@ -429,7 +429,19 @@ const Books = () => {
             } by ${searchParams.get("username")}`}</Typography>
           </Box>
         ) : (
-          <Typography variant="h2">Books</Typography>
+          <Box
+            sx={{
+              p: 3,
+              borderRadius: "14px",
+              bgcolor: "#fff",
+              textAlign: "center",
+              width: "fit-content",
+              zIndex: "10",
+              mb: 5,
+            }}
+          >
+            <Typography variant="h3">BOOKS</Typography>
+          </Box>
         )}
 
         <Box>

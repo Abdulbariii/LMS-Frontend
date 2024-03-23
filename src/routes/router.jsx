@@ -72,9 +72,9 @@ const routesConfig = [
       {
         path: routes.signup.path,
         element: (
-          <UnAuth>
+          <Protected>
             <Signup />
-          </UnAuth>
+          </Protected>
         ),
         action: signupAction,
       },
