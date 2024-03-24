@@ -10,7 +10,7 @@ export const staffLoader = async () => {
   let users = {};
 
   try {
-    users = fetchData("http://127.0.0.1:8000/api/users-auth/");
+    users = fetchData("http://127.0.0.1:8000/api/users-auth?is_staff=true");
   } catch (err) {
     console.log(err);
   }

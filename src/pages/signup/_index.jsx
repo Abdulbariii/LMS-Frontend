@@ -19,6 +19,7 @@ import { CircularProgress } from "@mui/material";
 export const signupAction = async ({ request }) => {
   if (request.method !== "POST") return {};
 
+
   const formData = await request.formData();
 
   const formDataObject = Object.fromEntries(formData.entries());
@@ -39,7 +40,7 @@ export const signupAction = async ({ request }) => {
         username: formDataObject.username,
         email: formDataObject.email,
         password: formDataObject.password,
-        is_staff: true,
+        is_staff: Boolean(formDataObject.is_staff),
       }),
     });
 
@@ -57,7 +58,8 @@ const Signup = () => {
   const response = useActionData();
   const navigate = useNavigate();
   const [loginError, setLoginError] = useState();
-  console.log(loginError);
+  const [isAdmin,setIsAdmin] = useState(false);
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -213,8 +215,10 @@ const Signup = () => {
                 }
               />
               <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
+                control={<Checkbox checked={isAdmin} value={isAdmin} onChange={(e)=>{setIsAdmin(e.target.checked)}} color="primary" />}
+                
                 label="Is admin"
+                name="is_staff"
               />
               <Button
                 disabled={loginError ? true : false}
