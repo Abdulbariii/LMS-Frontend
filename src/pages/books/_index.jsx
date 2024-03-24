@@ -91,14 +91,16 @@ export const addBookAction = async ({ request }) => {
     }
   }
 
-  if (request.method === "PUT") {
+  if (request.method === "PATCH") {
+   
     const formData = await request.formData();
     const formDataObject = Object.fromEntries(formData.entries());
     const { id } = formDataObject;
     console.log(formDataObject, "put");
+   
 
     try {
-      actionResponse = await editBook(id, formData);
+      actionResponse = await editBook(id,formDataObject);
     } catch (err) {
       console.log(err);
     }
@@ -142,6 +144,7 @@ const StripedDataGrid = styled(DataGrid)(({ theme }) => ({
 }));
 
 const Books = () => {
+
   const booksData = useLoaderData();
   const [showAdd, setShowAdd] = useState(false);
   let [searchParams, setSearchParams] = useSearchParams();

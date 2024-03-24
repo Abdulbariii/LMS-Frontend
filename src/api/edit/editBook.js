@@ -1,14 +1,25 @@
 const editBook = async (bookId, updatedBookData) => {
+  console.log(updatedBookData,'haha')
   const accessToken = localStorage.getItem("access");
   let response;
 
   try {
+    // const formData = new FormData();
+    // formData.append("cover_image", updatedBookData.cover_image);
+    // formData.append("title", updatedBookData.title);
+
+
+
+
     response = await fetch(`http://127.0.0.1:8000/api/books/${bookId}/`, {
-      method: "PUT", // or 'PATCH' depending on your API's requirements
+      method: "PATCH", // or 'PATCH' depending on your API's requirements
       headers: {
         Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        
       },
-      body: updatedBookData,
+      body: JSON.stringify(updatedBookData),
+      // body:formData for image
     });
 
     if (!response.ok) {

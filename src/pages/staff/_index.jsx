@@ -127,7 +127,7 @@ const Staff = () => {
                     Books booked
                   </Button>
                   <Button sx={{ minWidth: "160px" }} variant="outlined">
-                    <Link to="/signup">Add new admins</Link>
+                    <Link to="/signup">Add new account</Link>
                   </Button>
                 </Box>
               </Card>

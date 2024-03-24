@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-// import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
@@ -21,6 +20,7 @@ import { useState, useEffect } from "react";
 
 // eslint-disable-next-line react/prop-types
 export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
+  const [up, setUp] = useState();
   const [updatedBook, setUpdatedBook] = useState({
     title: "",
     author: "",
@@ -60,6 +60,7 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
           const response = await fetch(
             `http://127.0.0.1:8000/api/books/${bookId}/`
           );
+
           if (response.ok) {
             const data = await response.json();
             // Update the state with the fetched data
@@ -68,6 +69,11 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
             data.added_by = data.added_by ? data.added_by.toString() : "";
             data.updated_by = localStorage.getItem("userId");
             setUpdatedBook(data);
+            setUp((prevBook) => ({
+              ...prevBook,
+              id: data.id,
+            }));
+           
           } else {
             console.error("Failed to fetch book data");
           }
@@ -91,41 +97,47 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
 
   const handleUpdate = async () => {
     const formDataNew = new FormData();
+    console.log(formDataNew);
 
-    console.log(updatedBook, "before send");
+    console.log(up, "before send");
 
     try {
-      for (const key in updatedBook) {
-        if (Object.prototype.hasOwnProperty.call(updatedBook, key)) {
+      for (const key in up) {
+        if (Object.prototype.hasOwnProperty.call(up, key)) {
           const apiFieldName =
             key === "publicationDate" ? "publication_date" : key;
-          formDataNew.append(apiFieldName, updatedBook[key]);
+          formDataNew.append(apiFieldName, up[key]);
         }
       }
-      if (typeof updatedBook.cover_image !== "string") {
-        formDataNew.append("cover_image", updatedBook.cover_image);
+      if (typeof up.cover_image !== "string") {
+        formDataNew.append("cover_image", up.cover_image);
+   
+
       } else {
-        const urlImage = extractPathFromURL(updatedBook.cover_image);
+        const urlImage = extractPathFromURL(up.cover_image);
         formDataNew.append("cover_image", urlImage);
+       
       }
 
       formDataNew.append("id", bookId);
     } catch (err) {
       console.log(err);
     }
+    console.log(formDataNew, "after");
 
     try {
       //   await editBook(`http://127.0.0.1:8000/api/books/${bookId}/`, updatedBook);
 
       if (typeof updatedBook.cover_image !== "string") {
+       
         submit(formDataNew, {
-          method: "PUT",
+          method: "PATCH",
           action: ".",
           encType: "multipart/form-data",
         });
       } else {
-        submit(formDataNew, {
-          method: "PUT",
+        submit(up, {
+          method: "PATCH",
           action: ".",
         });
       }
@@ -139,6 +151,12 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     const { name, value, type, checked, files } = e.target;
     const fieldValue =
       type === "checkbox" ? checked : type === "file" ? files[0] : value;
+
+    console.log(fieldValue);
+    setUp((prevBook) => ({
+      ...prevBook,
+      [name]: fieldValue,
+    }));
     setUpdatedBook((prevBook) => ({
       ...prevBook,
       [name]: fieldValue,
@@ -159,6 +177,10 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
   ];
 
   const handleGenreOption = (e) => {
+    setUp((prevState) => ({
+      ...prevState,
+      genre: e.target.value,
+    }));
     setUpdatedBook((prevState) => ({
       ...prevState,
       genre: e.target.value,
