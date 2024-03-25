@@ -40,19 +40,6 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     added_by: "",
   });
 
-  function extractPathFromURL(url) {
-    // Find the index of "media/books/covers/" in the URL
-    const startIndex = url.indexOf("media/books/covers/");
-    if (startIndex !== -1) {
-      // Extract the path starting from "media/books/covers/"
-      const path = url.substring(startIndex);
-      return path;
-    } else {
-      // If "media/books/covers/" is not found in the URL, return the original URL
-      return url;
-    }
-  }
-
   useEffect(() => {
     const fetchData = async () => {
       if (showEdit) {
@@ -73,7 +60,6 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
               ...prevBook,
               id: data.id,
             }));
-           
           } else {
             console.error("Failed to fetch book data");
           }
@@ -86,8 +72,6 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     fetchData();
   }, [showEdit, bookId]);
 
-  console.log(updatedBook);
-
   const submit = useSubmit();
   const navigation = useNavigation();
 
@@ -97,9 +81,6 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
 
   const handleUpdate = async () => {
     const formDataNew = new FormData();
-    console.log(formDataNew);
-
-    console.log(up, "before send");
 
     try {
       for (const key in up) {
@@ -109,27 +90,17 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
           formDataNew.append(apiFieldName, up[key]);
         }
       }
-      if (typeof up.cover_image !== "string") {
+      if (up.cover_image) {
         formDataNew.append("cover_image", up.cover_image);
-   
-
-      } else {
-        const urlImage = extractPathFromURL(up.cover_image);
-        formDataNew.append("cover_image", urlImage);
-       
       }
 
       formDataNew.append("id", bookId);
     } catch (err) {
       console.log(err);
     }
-    console.log(formDataNew, "after");
 
     try {
-      //   await editBook(`http://127.0.0.1:8000/api/books/${bookId}/`, updatedBook);
-
-      if (typeof updatedBook.cover_image !== "string") {
-       
+      if (up.cover_image) {
         submit(formDataNew, {
           method: "PATCH",
           action: ".",
@@ -152,7 +123,6 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     const fieldValue =
       type === "checkbox" ? checked : type === "file" ? files[0] : value;
 
-    console.log(fieldValue);
     setUp((prevBook) => ({
       ...prevBook,
       [name]: fieldValue,
