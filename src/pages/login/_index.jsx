@@ -77,8 +77,6 @@ const Login = () => {
     }
   }, [response]);
 
-  console.log(response);
-
   return (
     <div className="login">
       {/*  <div

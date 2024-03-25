@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-// import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Checkbox from "@mui/material/Checkbox";
@@ -21,6 +20,7 @@ import { useState, useEffect } from "react";
 
 // eslint-disable-next-line react/prop-types
 export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
+  const [up, setUp] = useState();
   const [updatedBook, setUpdatedBook] = useState({
     title: "",
     author: "",
@@ -40,19 +40,6 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     added_by: "",
   });
 
-  function extractPathFromURL(url) {
-    // Find the index of "media/books/covers/" in the URL
-    const startIndex = url.indexOf("media/books/covers/");
-    if (startIndex !== -1) {
-      // Extract the path starting from "media/books/covers/"
-      const path = url.substring(startIndex);
-      return path;
-    } else {
-      // If "media/books/covers/" is not found in the URL, return the original URL
-      return url;
-    }
-  }
-
   useEffect(() => {
     const fetchData = async () => {
       if (showEdit) {
@@ -60,6 +47,7 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
           const response = await fetch(
             `http://127.0.0.1:8000/api/books/${bookId}/`
           );
+
           if (response.ok) {
             const data = await response.json();
             // Update the state with the fetched data
@@ -68,6 +56,10 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
             data.added_by = data.added_by ? data.added_by.toString() : "";
             data.updated_by = localStorage.getItem("userId");
             setUpdatedBook(data);
+            setUp((prevBook) => ({
+              ...prevBook,
+              id: data.id,
+            }));
           } else {
             console.error("Failed to fetch book data");
           }
@@ -80,8 +72,6 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     fetchData();
   }, [showEdit, bookId]);
 
-  console.log(updatedBook);
-
   const submit = useSubmit();
   const navigation = useNavigation();
 
@@ -92,21 +82,16 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
   const handleUpdate = async () => {
     const formDataNew = new FormData();
 
-    console.log(updatedBook, "before send");
-
     try {
-      for (const key in updatedBook) {
-        if (Object.prototype.hasOwnProperty.call(updatedBook, key)) {
+      for (const key in up) {
+        if (Object.prototype.hasOwnProperty.call(up, key)) {
           const apiFieldName =
             key === "publicationDate" ? "publication_date" : key;
-          formDataNew.append(apiFieldName, updatedBook[key]);
+          formDataNew.append(apiFieldName, up[key]);
         }
       }
-      if (typeof updatedBook.cover_image !== "string") {
-        formDataNew.append("cover_image", updatedBook.cover_image);
-      } else {
-        const urlImage = extractPathFromURL(updatedBook.cover_image);
-        formDataNew.append("cover_image", urlImage);
+      if (up.cover_image) {
+        formDataNew.append("cover_image", up.cover_image);
       }
 
       formDataNew.append("id", bookId);
@@ -115,17 +100,15 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     }
 
     try {
-      //   await editBook(`http://127.0.0.1:8000/api/books/${bookId}/`, updatedBook);
-
-      if (typeof updatedBook.cover_image !== "string") {
+      if (up.cover_image) {
         submit(formDataNew, {
-          method: "PUT",
+          method: "PATCH",
           action: ".",
           encType: "multipart/form-data",
         });
       } else {
-        submit(formDataNew, {
-          method: "PUT",
+        submit(up, {
+          method: "PATCH",
           action: ".",
         });
       }
@@ -139,6 +122,11 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
     const { name, value, type, checked, files } = e.target;
     const fieldValue =
       type === "checkbox" ? checked : type === "file" ? files[0] : value;
+
+    setUp((prevBook) => ({
+      ...prevBook,
+      [name]: fieldValue,
+    }));
     setUpdatedBook((prevBook) => ({
       ...prevBook,
       [name]: fieldValue,
@@ -159,6 +147,10 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
   ];
 
   const handleGenreOption = (e) => {
+    setUp((prevState) => ({
+      ...prevState,
+      genre: e.target.value,
+    }));
     setUpdatedBook((prevState) => ({
       ...prevState,
       genre: e.target.value,

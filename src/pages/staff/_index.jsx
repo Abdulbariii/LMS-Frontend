@@ -10,7 +10,7 @@ export const staffLoader = async () => {
   let users = {};
 
   try {
-    users = fetchData("http://127.0.0.1:8000/api/users-auth/");
+    users = fetchData("http://127.0.0.1:8000/api/users-auth?is_staff=true");
   } catch (err) {
     console.log(err);
   }
@@ -127,7 +127,7 @@ const Staff = () => {
                     Books booked
                   </Button>
                   <Button sx={{ minWidth: "160px" }} variant="outlined">
-                    <Link to="/signup">Add new admins</Link>
+                    <Link to="/signup">Add new account</Link>
                   </Button>
                 </Box>
               </Card>

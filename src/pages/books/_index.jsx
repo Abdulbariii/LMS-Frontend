@@ -81,8 +81,6 @@ export const addBookAction = async ({ request }) => {
   let actionResponse;
   if (request.method === "POST") {
     const formData = await request.formData();
-    const formDataObject = Object.fromEntries(formData.entries());
-    console.log(formDataObject, "post");
 
     try {
       actionResponse = await addBook(formData);
@@ -91,18 +89,26 @@ export const addBookAction = async ({ request }) => {
     }
   }
 
-  if (request.method === "PUT") {
+  if (request.method === "PATCH") {
     const formData = await request.formData();
     const formDataObject = Object.fromEntries(formData.entries());
     const { id } = formDataObject;
-    console.log(formDataObject, "put");
 
-    try {
-      actionResponse = await editBook(id, formData);
-    } catch (err) {
-      console.log(err);
+    if (formData.get("cover_image")) {
+      try {
+        actionResponse = await editBook(id, formData);
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      try {
+        actionResponse = await editBook(id, JSON.stringify(formDataObject));
+      } catch (err) {
+        console.log(err);
+      }
     }
   }
+
   return actionResponse;
 };
 

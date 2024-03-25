@@ -70,7 +70,6 @@ export default function AddBookModal({ showAdd, setShowAdd, loading }) {
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    console.log(typeof value);
     const fieldValue =
       type === "checkbox" ? checked : type === "file" ? files[0] : value;
     setNewBook((prevBook) => ({
