@@ -14,8 +14,8 @@ const routes = {
       path: "/books/:bookId",
     },
   },
-  rent: {
-    path: "/rent",
+  booking: {
+    path: "/booking",
   },
   staff: {
     path: "/staff",

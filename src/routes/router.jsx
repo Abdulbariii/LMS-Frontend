@@ -5,7 +5,7 @@ import Protected from "../components/auth/Protected";
 import UnAuth from "../components/auth/UnAuth";
 import Login, { loginAction } from "../pages/login/_index";
 import Books, { booksLoader, addBookAction } from "../pages/books/_index";
-import Rent from "../pages/rent/_index";
+import Booking from "../pages/booking/_index";
 import Staff, { staffLoader } from "../pages/staff/_index";
 import Questions from "../pages/questions/_index";
 import Home from "../pages/home/_index";
@@ -35,10 +35,10 @@ const routesConfig = [
         action: addBookAction,
       },
       {
-        path: routes.rent.path,
+        path: routes.booking.path,
         element: (
           <Protected>
-            <Rent />
+            <Booking />
           </Protected>
         ),
       },

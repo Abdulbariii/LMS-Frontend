@@ -93,8 +93,8 @@ export default function SideBar() {
     { name: "Home", path: routes.root.path, icon: <HomeIcon /> },
     { name: "Books", path: routes.books.path, icon: <MenuBookIcon /> },
     {
-      name: "Rent Process",
-      path: routes.rent.path,
+      name: "booking",
+      path: routes.booking.path,
       icon: <CompareArrowsIcon />,
     },
     { name: "Staff", path: routes.staff.path, icon: <GroupsIcon /> },
