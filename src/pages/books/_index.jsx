@@ -29,6 +29,7 @@ import addBook from "../../api/Post/addBook";
 import editBook from "../../api/edit/editBook";
 import Slide from "@mui/material/Slide";
 
+
 export const booksLoader = async ({ request }) => {
   const url = new URL(request.url);
   let page = url.searchParams.get("page");
@@ -215,7 +216,6 @@ const Books = () => {
       minWidth: 100,
       valueGetter: (params) => (params.row.is_booked ? "Booked" : "Not booked"),
     },
-
     {
       field: "Covers",
       headerName: "Covers",
