@@ -5,6 +5,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
+import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { Typography, CircularProgress } from "@mui/material";
 import { useSubmit } from "react-router-dom";
@@ -21,6 +24,8 @@ export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
     isBooked: null,
     isPending: null,
   });
+  const [bookId, setBookId] = useState(false);
+  const [userIdd, setUserIdd] = useState(false);
 
   const submit = useSubmit();
 
@@ -60,6 +65,52 @@ export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
       [name]: fieldValue,
     }));
   };
+  const handleFetchSearch = async (book_code) => {
+    if (book_code.length === 0) {
+      return;
+    }
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/books/?book_code=${book_code}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setBookId(data.results[0].id && true);
+    } catch (error) {
+      setBookId(false);
+      alert("This book code doesnt exsit");
+    }
+  };
+
+  const handleClickSearch = () => {
+    handleFetchSearch(newBooking.book_id);
+  };
+
+  const handleUserFetchSearch = async (user_id) => {
+    if (user_id.length === 0) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://127.0.0.1:8000/api/users-auth/?id=${user_id}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      setUserIdd(data[0].id && true);
+    } catch (error) {
+      setUserIdd(false);
+      alert("This user id doesnt exsit");
+    }
+  };
+
+  const handleUserClickSearch = () => {
+    handleUserFetchSearch(newBooking.user_id);
+  };
 
   return (
     <React.Fragment>
@@ -86,23 +137,48 @@ export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
             margin="dense"
             id="book_id"
             label="Book id"
-            type="number"
+            type="string"
             fullWidth
             name="book_id"
             value={newBooking.book_id}
             onChange={handleChange}
+            InputProps={{
+              endAdornment: (
+                <IconButton onClick={handleClickSearch}>
+                  {bookId ? (
+                    <CheckCircleIcon style={{ color: "green" }} />
+                  ) : (
+                    <SearchIcon />
+                  )}
+                </IconButton>
+              ),
+            }}
+            disabled={bookId}
           />
+
           <TextField
             sx={{ borderRadius: "8px", width: "45%" }}
             autoFocus
             margin="dense"
             id="user_id"
             label="User id"
-            type="number"
+            type="string"
             fullWidth
             name="user_id"
             value={newBooking.user_id}
             onChange={handleChange}
+            InputProps={{
+              endAdornment: (
+                <IconButton onClick={handleUserClickSearch}>
+                  {userIdd ? (
+                    <CheckCircleIcon style={{ color: "green" }} />
+                  ) : (
+                    <SearchIcon />
+                  )}
+                </IconButton>
+              ),
+            }}
+            disabled={userIdd}
           />
           <TextField
             sx={{ borderRadius: "8px", width: "45%" }}
@@ -161,6 +237,7 @@ export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
                 bgcolor: "#f0fff0", // theme.palette.primary.main
               },
             }}
+            disabled={!(userIdd && bookId)}
           >
             {loading === "submitting" ? (
               <CircularProgress color="inherit" size={"25px"} />
