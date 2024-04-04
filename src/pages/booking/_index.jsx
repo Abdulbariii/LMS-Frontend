@@ -1,14 +1,17 @@
+import { useState } from "react";
 import { Box, Typography, Button, Stack, Chip, Avatar } from "@mui/material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { getBooking } from "../../api/booking/getBooking";
 import { useLoaderData, useRevalidator, useNavigation } from "react-router-dom";
-import { CoverModal } from "../../components/pages/books/CoverModal";
+import { CoverModal } from "../../components/pages/books/modals/CoverModal";
 import { convertBookingToTableForm } from "../../lib/booking/ConvertBookingData";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import { alpha, styled } from "@mui/material/styles";
 import FindInPageRoundedIcon from "@mui/icons-material/FindInPageRounded";
 import DoneIcon from "@mui/icons-material/Done";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import AddPhysicalBooking from "../../components/pages/booking/modals/AddPhysicalBooking";
 
 export const bookingLoader = async () => {
   let bookingData = {};
@@ -62,6 +65,7 @@ const Booking = () => {
   const bookingData = useLoaderData();
   const revalidator = useRevalidator();
   const navigation = useNavigation();
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const columns = [
     { field: "book_code", headerName: "Book code", width: 200 },
@@ -166,6 +170,7 @@ const Booking = () => {
 
         <Button
           variant="outlined"
+          onClick={() => setShowAddModal(true)}
           sx={{
             bgcolor: "#fff",
             height: "65px",
@@ -182,6 +187,30 @@ const Booking = () => {
           <Typography sx={{ ml: 1 }} variant="caption">
             Add physical booking
           </Typography>
+        </Button>
+      </Box>
+
+      <Box>
+        <Button
+          onClick={() => {
+            revalidator.revalidate();
+          }}
+          variant="outlined"
+          sx={{
+            bgcolor: "#fff",
+            height: "50px",
+            borderRadius: "10px",
+            width: "125px",
+            mr: "5px",
+            mb: 2,
+            color: "text.main",
+            ":hover": {
+              bgcolor: "#f0fff0", // theme.palette.primary.main
+            },
+          }}
+        >
+          <RefreshIcon variant="medium" />
+          <Typography variant="caption">Refresh</Typography>
         </Button>
       </Box>
 
@@ -215,6 +244,13 @@ const Booking = () => {
           }
           rows={bookingData.length ? bookingData : []}
           columns={columns}
+        />
+      )}
+      {showAddModal && (
+        <AddPhysicalBooking
+          loading={navigation.state}
+          setShowAdd={setShowAddModal}
+          showAdd={showAddModal}
         />
       )}
     </div>

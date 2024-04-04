@@ -5,8 +5,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useEffect, useState } from "react";
-import DeleteModal from "../modals/DeleteModal";
-import EditModal from "../modals/UpdateModal";
+import DeleteModal from "../pages/books/modals/DeleteModal";
+import EditModal from "../pages/books/modals/UpdateModal";
 import { useActionData } from "react-router-dom";
 
 const options = ["View", "Edit", "Delete"];

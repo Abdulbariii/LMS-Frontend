@@ -2,7 +2,7 @@ import { useLoaderData, useActionData } from "react-router-dom";
 import { gettingBooks } from "../../api/endpoints/Books";
 import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import Button from "@mui/material/Button";
-import AddBookModal from "../../components/modals/AddBookModal";
+import AddBookModal from "../../components/pages/books/modals/AddBookModal";
 import { Box, Typography, Alert } from "@mui/material";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import { alpha, styled } from "@mui/material/styles";
@@ -23,12 +23,11 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import FindInPageRoundedIcon from "@mui/icons-material/FindInPageRounded";
 import { Stack } from "@mui/material";
-import { CoverModal } from "../../components/pages/books/CoverModal";
+import { CoverModal } from "../../components/pages/books/modals/CoverModal";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import addBook from "../../api/Post/addBook";
 import editBook from "../../api/edit/editBook";
 import Slide from "@mui/material/Slide";
-
 
 export const booksLoader = async ({ request }) => {
   const url = new URL(request.url);

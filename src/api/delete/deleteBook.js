@@ -1,4 +1,4 @@
-const deleteBook = async (url) => {
+export const deleteBook = async (url) => {
   const accessToken = localStorage.getItem("access");
 
   try {
@@ -25,5 +25,3 @@ const deleteBook = async (url) => {
     console.error("An error occurred while deleting the book:", error);
   }
 };
-
-export default deleteBook;

@@ -6,7 +6,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import deleteBook from "../../api/delete/deleteBook";
+import { deleteBook } from "../../../../api/delete/deleteBook";
 import { useRevalidator } from "react-router-dom";
 
 export default function DeleteModal({ showDelete, setShowDelete, bookId }) {
