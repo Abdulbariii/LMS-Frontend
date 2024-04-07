@@ -10,8 +10,6 @@ export const CoverModal = ({ data }) => {
     setIsOpen(!isOpen);
   }, [setIsOpen, isOpen]);
 
-  console.log(data);
-
   return (
     <div>
       <Modal

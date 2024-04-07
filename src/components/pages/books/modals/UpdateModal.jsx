@@ -5,8 +5,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import { useSubmit, useNavigation } from "react-router-dom";
 import {
   Select,
@@ -316,16 +314,6 @@ export default function UpdateModal({ showEdit, setShowEdit, bookId }) {
             name="cover_image"
             sx={{ borderRadius: "8px", width: "45%" }}
             onChange={handleChange}
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={updatedBook.is_booked}
-                onChange={handleChange}
-                name="is_booked"
-              />
-            }
-            label="Is Booked"
           />
         </DialogContent>
         <DialogActions>

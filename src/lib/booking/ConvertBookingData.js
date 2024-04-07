@@ -9,6 +9,8 @@ export function convertBookingToTableForm(data) {
       student: `${process.user.first_name} ${process.user.last_name}`,
       status: process.isBooked ? "Booked" : "Pending",
       cover_image: process.book.cover_image,
+      deadline_date: process.deadline_date,
+      booking_date: process.booking_date,
     };
   });
 

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -10,11 +11,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import { Typography, CircularProgress } from "@mui/material";
-import { useSubmit } from "react-router-dom";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useState } from "react";
 
 // eslint-disable-next-line react/prop-types
-export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
+export default function AddPhysicalBooking({
+  showAdd,
+  setShowAdd,
+  loading,
+  handleSubmit,
+}) {
   const [newBooking, setNewBooking] = useState({
     booking_date: "",
     book_id: "",
@@ -25,45 +31,48 @@ export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
     isPending: null,
   });
   const [bookId, setBookId] = useState(false);
-  const [userIdd, setUserIdd] = useState(false);
-
-  const submit = useSubmit();
+  const [userIdd, setUserId] = useState(false);
+  const [bookCodeError, setBookCodeError] = useState("");
+  const [studentIdError, setStudentIdError] = useState("");
+  const [bookingDate, setBookingDate] = useState();
+  const [deadlineDate, setDeadlineDate] = useState();
+  const [numberOfCopies, setNumberOfCopies] = useState();
 
   const handleClose = () => {
     setShowAdd(false);
   };
 
   const handleAdd = async () => {
-    const formDataNew = new FormData();
+    const bookingData = {
+      booking_date: bookingDate,
+      deadline_date: deadlineDate,
+      isPending: false,
+      isBooked: true,
+      book_id: bookId,
+      user_id: userIdd,
+      admin_id: localStorage.getItem("userId"),
+      number_of_copies: numberOfCopies,
+    };
 
-    try {
-      for (const key in newBooking) {
-        if (Object.prototype.hasOwnProperty.call(newBooking, key)) {
-          const apiFieldName =
-            key === "publicationDate" ? "publication_date" : key;
-          formDataNew.append(apiFieldName, newBooking[key]);
-        }
-      }
-      formDataNew.append("cover_image", newBooking.cover_image);
-    } catch (err) {
-      console.log(err);
-    }
-
-    submit(formDataNew, {
-      method: "POST",
-      action: ".",
-      encType: "multipart/form-data",
-    });
+    handleSubmit(bookingData);
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    const fieldValue =
-      type === "checkbox" ? checked : type === "file" ? files[0] : value;
+    const { name, value } = e.target;
+    const fieldValue = value;
     setNewBooking((prevBook) => ({
       ...prevBook,
       [name]: fieldValue,
     }));
+  };
+
+  const handleBookingDate = (e) => {
+    const dateFormat = `${e.$y}-${e.$M + 1}-${e.$D}`;
+    setBookingDate(dateFormat);
+  };
+  const handleDeadlineDate = (e) => {
+    const dateFormat = `${e.$y}-${e.$M + 1}-${e.$D}`;
+    setDeadlineDate(dateFormat);
   };
   const handleFetchSearch = async (book_code) => {
     if (book_code.length === 0) {
@@ -77,10 +86,16 @@ export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      setBookId(data.results[0].id && true);
+      if (Number(data.results[0].number_of_copies) > 0) {
+        setBookId(data.results[0].id);
+        setNumberOfCopies(data.results[0].number_of_copies);
+        setBookCodeError("");
+      } else {
+        setBookCodeError("No copies avaliable");
+      }
     } catch (error) {
       setBookId(false);
-      alert("This book code doesnt exsit");
+      setBookCodeError("Wrong book code");
     }
   };
 
@@ -101,10 +116,16 @@ export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-      setUserIdd(data[0].id && true);
+      if (data[0].id && data[0].is_staff) {
+        setUserId(false);
+        setStudentIdError("This is id of the admin, not student");
+      } else {
+        setUserId(data[0].id);
+        setStudentIdError("");
+      }
     } catch (error) {
-      setUserIdd(false);
-      alert("This user id doesnt exsit");
+      setUserId(false);
+      setStudentIdError("This student id doesnt exsit");
     }
   };
 
@@ -136,10 +157,12 @@ export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
             autoFocus
             margin="dense"
             id="book_id"
-            label="Book id"
+            label="Book code"
             type="string"
             fullWidth
             name="book_id"
+            error={bookCodeError && true}
+            helperText={bookCodeError && bookCodeError}
             value={newBooking.book_id}
             onChange={handleChange}
             InputProps={{
@@ -159,9 +182,11 @@ export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
           <TextField
             sx={{ borderRadius: "8px", width: "45%" }}
             autoFocus
+            error={studentIdError && true}
+            helperText={studentIdError && studentIdError}
             margin="dense"
             id="user_id"
-            label="User id"
+            label="Student id"
             type="string"
             fullWidth
             name="user_id"
@@ -180,28 +205,29 @@ export default function AddPhysicalBooking({ showAdd, setShowAdd, loading }) {
             }}
             disabled={userIdd}
           />
-          <TextField
+
+          <DatePicker
             sx={{ borderRadius: "8px", width: "45%" }}
             margin="dense"
             id="booking_date"
             label="Booking date"
             type="date"
             fullWidth
+            autoFocus
             name="booking_date"
             value={newBooking.booking_date}
-            onChange={handleChange}
+            onChange={handleBookingDate}
           />
-          <TextField
+          <DatePicker
             sx={{ borderRadius: "8px", width: "45%" }}
-            autoFocus
-            margin="dense"
             id="deadline_date"
             label="Deadline date"
             type="date"
+            autoFocus
             fullWidth
             name="deadline_date"
-            value={newBooking.page_number}
-            onChange={handleChange}
+            value={newBooking.deadline_date}
+            onChange={handleDeadlineDate}
           />
         </DialogContent>
         <DialogActions>

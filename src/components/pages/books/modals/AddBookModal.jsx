@@ -5,8 +5,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
-import Checkbox from "@mui/material/Checkbox";
-import FormControlLabel from "@mui/material/FormControlLabel";
 import {
   Select,
   Box,
@@ -36,6 +34,7 @@ export default function AddBookModal({ showAdd, setShowAdd, loading }) {
     dewey_decimal_number: "",
     dewey_decimal_category_range: "",
     updated_by: "",
+    number_of_copies: "",
     added_by: localStorage.getItem("userId"),
   });
 
@@ -247,7 +246,7 @@ export default function AddBookModal({ showAdd, setShowAdd, loading }) {
             sx={{ borderRadius: "8px", width: "45%" }}
             margin="dense"
             id="dewey_decimal_category_range"
-            label="Dewey decimal category range"
+            label="Dewey decimal cut"
             type="text"
             fullWidth
             name="dewey_decimal_category_range"
@@ -264,15 +263,15 @@ export default function AddBookModal({ showAdd, setShowAdd, loading }) {
             name="cover_image"
             onChange={handleChange}
           />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={newBook.is_booked}
-                onChange={handleChange}
-                name="is_booked"
-              />
-            }
-            label="Is Booked"
+          <TextField
+            margin="dense"
+            id="number_of_copies"
+            sx={{ borderRadius: "8px", width: "45%" }}
+            type="number"
+            label="Number of copies"
+            fullWidth
+            name="number_of_copies"
+            onChange={handleChange}
           />
         </DialogContent>
         <DialogActions>

@@ -79,6 +79,9 @@ export const addBookAction = async ({ request }) => {
   let actionResponse;
   if (request.method === "POST") {
     const formData = await request.formData();
+    const formDataObject = Object.fromEntries(formData.entries());
+
+    console.log(formDataObject);
 
     try {
       actionResponse = await addBook(formData);
@@ -210,6 +213,12 @@ const Books = () => {
     },
 
     {
+      field: "number_of_copies",
+      headerName: "Copies",
+      width: 100,
+    },
+
+    {
       field: "is_booked",
       headerName: "Available",
       minWidth: 100,
@@ -218,7 +227,7 @@ const Books = () => {
     {
       field: "Covers",
       headerName: "Covers",
-      width: 120,
+      width: 100,
       renderCell: (params) => <CoverModal data={params} />,
     },
     {

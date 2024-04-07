@@ -5,11 +5,15 @@ import Protected from "../components/auth/Protected";
 import UnAuth from "../components/auth/UnAuth";
 import Login, { loginAction } from "../pages/login/_index";
 import Books, { booksLoader, addBookAction } from "../pages/books/_index";
-import Booking, { bookingLoader } from "../pages/booking/_index";
+import Booking, { bookingAction, bookingLoader } from "../pages/booking/_index";
 import Staff, { staffLoader } from "../pages/staff/_index";
 import Questions from "../pages/questions/_index";
 import Home from "../pages/home/_index";
 import Signup, { signupAction } from "../pages/signup/_index";
+import BookingDetail, {
+  bookingDetailLoader,
+  bookingDetailAction,
+} from "../pages/booking/$id";
 
 const routesConfig = [
   {
@@ -42,7 +46,19 @@ const routesConfig = [
           </Protected>
         ),
         loader: bookingLoader,
+        action: bookingAction,
       },
+      {
+        path: routes.booking.children.path,
+        element: (
+          <Protected>
+            <BookingDetail />
+          </Protected>
+        ),
+        loader: bookingDetailLoader,
+        action: bookingDetailAction,
+      },
+
       {
         path: routes.questions.path,
         element: (

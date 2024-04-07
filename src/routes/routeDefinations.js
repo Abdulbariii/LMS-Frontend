@@ -16,6 +16,9 @@ const routes = {
   },
   booking: {
     path: "/booking",
+    children: {
+      path: "/booking/:id",
+    },
   },
   staff: {
     path: "/staff",
