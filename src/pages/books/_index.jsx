@@ -6,6 +6,7 @@ import AddBookModal from "../../components/pages/books/modals/AddBookModal";
 import { Box, Typography, Alert } from "@mui/material";
 import { DataGrid, gridClasses } from "@mui/x-data-grid";
 import { alpha, styled } from "@mui/material/styles";
+import AddBookByGlobalSearch from "../../components/pages/books/modals/AddBookByGlobalSearch";
 import {
   useSearchParams,
   useNavigation,
@@ -158,6 +159,7 @@ const Books = () => {
   const revalidator = useRevalidator();
   const [publicationDate, setPublicationDate] = useState();
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showAddGlobal, setShowAddGlobal] = useState(false);
   const alertSuccessContainer = useRef();
   const currentPage = useMemo(
     () => searchParams.get("page") || 1,
@@ -474,7 +476,25 @@ const Books = () => {
             }}
           >
             <AddRoundedIcon fontSize="medium" />
-            <Typography variant="caption">Add</Typography>
+            <Typography variant="caption">Manual adding</Typography>
+          </Button>
+          <Button
+            onClick={() => setShowAddGlobal(true)}
+            variant="outlined"
+            sx={{
+              bgcolor: "#fff",
+              height: "65px",
+              borderRadius: "8px",
+              width: "125px",
+              mr: "5px",
+              color: "text.main",
+              ":hover": {
+                bgcolor: "#f0fff0", // theme.palette.primary.main
+              },
+            }}
+          >
+            <AddRoundedIcon fontSize="medium" />
+            <Typography variant="caption">Global adding</Typography>
           </Button>
         </Box>
       </Box>
@@ -780,6 +800,13 @@ const Books = () => {
           loading={navigation.state}
           setShowAdd={setShowAdd}
           showAdd={showAdd}
+        />
+      )}
+      {showAddGlobal && (
+        <AddBookByGlobalSearch
+          loading={navigation.state}
+          setShowAddGlobal={setShowAddGlobal}
+          showAddGlobal={showAddGlobal}
         />
       )}
 

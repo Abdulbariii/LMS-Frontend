@@ -110,6 +110,7 @@ const BookingDetail = () => {
         bookingId: bookingData.id,
         deadline_date: deadlineDate,
         booking_date: bookingDate,
+        admin: { id: localStorage.getItem("userId") },
       },
       {
         method: "PATCH",
