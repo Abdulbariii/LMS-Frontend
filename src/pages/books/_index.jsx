@@ -82,10 +82,10 @@ export const addBookAction = async ({ request }) => {
     const formData = await request.formData();
     const formDataObject = Object.fromEntries(formData.entries());
 
-    console.log(formDataObject);
-
     try {
-      actionResponse = await addBook(formData);
+      actionResponse = await addBook(
+        formDataObject.digital_image ? formDataObject : formData
+      );
     } catch (err) {
       console.log(err);
     }

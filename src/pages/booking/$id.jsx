@@ -104,6 +104,8 @@ const BookingDetail = () => {
     setDeadlineDate(dateFormat);
   };
 
+  console.log(localStorage.getItem("userId"));
+
   const handleApprove = () => {
     submit(
       {
@@ -248,13 +250,13 @@ const BookingDetail = () => {
                 >
                   <Typography variant="h4">ADMIN</Typography>
                   <Typography sx={{ m: 1 }} variant="h5">
-                    First name: <strong>{bookingData.admin.first_name}</strong>
+                    First name: <strong>{bookingData.admin?.first_name}</strong>
                   </Typography>
                   <Typography sx={{ m: 1 }} variant="h5">
-                    Last name: <strong>{bookingData.admin.last_name}</strong>
+                    Last name: <strong>{bookingData.admin?.last_name}</strong>
                   </Typography>
                   <Typography sx={{ m: 1 }} variant="h5">
-                    Email: <strong>{bookingData.admin.email}</strong>
+                    Email: <strong>{bookingData.admin?.email}</strong>
                   </Typography>
                 </Box>
               )}

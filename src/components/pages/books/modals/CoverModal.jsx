@@ -59,7 +59,11 @@ export const CoverModal = ({ data }) => {
                 objectFit: "cover",
                 borderRadius: "10px",
               }}
-              src={`http://127.0.0.1:8000${data?.row.cover_image}`}
+              src={
+                data?.row.digital_image
+                  ? data?.row.digital_image
+                  : `http://127.0.0.1:8000${data?.row.cover_image}`
+              }
               alt="Book Cover"
             />
           </Box>
@@ -80,7 +84,11 @@ export const CoverModal = ({ data }) => {
               objectFit: "cover",
               borderRadius: "3px",
             }}
-            src={`http://127.0.0.1:8000${data?.row.cover_image}`}
+            src={
+              data?.row.digital_image
+                ? data?.row.digital_image
+                : `http://127.0.0.1:8000${data?.row.cover_image}`
+            }
             alt="Book Cover"
           />
         </Box>

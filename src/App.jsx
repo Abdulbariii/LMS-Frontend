@@ -11,7 +11,7 @@ function App() {
         main: lightGreen[800],
       },
       text: {
-        main: grey[500],
+        main: grey[700],
       },
     },
   });
